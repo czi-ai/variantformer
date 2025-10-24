@@ -138,6 +138,8 @@ credentials are required.
 
 [See `CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)
 
+# Responsible Use
+We are committed to advancing the responsible development and use of artificial intelligence. Please follow our [Acceptable Use Policy](https://virtualcellmodels.cziscience.com/acceptable-use-policy) when engaging with the model. The model is intended to be used for research purposes only and was not designed for clinical, diagnostic, or therapeutic purposes. You can find more information about the model and its intended uses here [link model card].
 
 # Reporting Security Issues
 
