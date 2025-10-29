@@ -13,6 +13,8 @@ import pathlib
 import sys
 
 import boto3
+from botocore import UNSIGNED
+from botocore.config import Config
 
 
 @dataclasses.dataclass
@@ -90,10 +92,10 @@ ARTIFACTS = [
         remote_uri=f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/data/hg38/genes/data/ENSG00000130203.9_hg38.npz",
         local_path="reference_genomes/data/hg38/genes/data/ENSG00000130203.9_hg38.npz",
     ),
-    Artifact(
-        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/",
-        local_path="1KG_af_hg38_tables",
-    ),
+    # Artifact(
+    #     remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/",
+    #     local_path="1KG_af_hg38_tables",
+    # ),
 ]
 
 
@@ -212,17 +214,11 @@ def _validate():
         )
 
 
-def main(
-    destination: pathlib.Path = DEFAULT_DESTINATION,
-    credentials: AWSCredentials | None = None,
-):
-    try:
-        _validate()
-    except Exception as e:
-        print("ABORTING DOWNLOAD", file=sys.stderr)
-        print(e, file=sys.stderr)
-        sys.exit(1)
-
+def get_s3_client(credentials: AWSCredentials | None = None, is_bucket_public: bool = False):
+    if is_bucket_public:
+        client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
+        return client
+        
     credentials = (
         credentials or AWSCredentials()
     )  # simplifies the logic if this is not None
@@ -242,7 +238,21 @@ def main(
         if credentials.aws_session_token:
             client_kwargs["aws_session_token"] = credentials.aws_session_token
         client = boto3.client("s3", **client_kwargs)
+    return client
 
+
+def main(
+    destination: pathlib.Path = DEFAULT_DESTINATION,
+    credentials: AWSCredentials | None = None,
+):
+    try:
+        _validate()
+    except Exception as e:
+        print("ABORTING DOWNLOAD", file=sys.stderr)
+        print(e, file=sys.stderr)
+        sys.exit(1)
+
+    client = get_s3_client(credentials, is_bucket_public=True)
     errors = download(client, destination)
 
     if errors:

@@ -11,6 +11,8 @@ import tempfile
 
 import boto3
 import duckdb
+from botocore import UNSIGNED
+from botocore.config import Config
 
 
 logger = logging.getLogger(__name__)
@@ -87,7 +89,8 @@ class _BaseManifestLookup:
 
     @functools.cached_property
     def s3(self):
-        client = boto3.client("s3", **self._aws_credentials)
+        # client = boto3.client("s3", **self._aws_credentials)
+        client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
         return client
 
     @functools.cached_property
