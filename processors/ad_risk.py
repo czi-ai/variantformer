@@ -4,7 +4,6 @@
 import pandas as pd
 from pathlib import Path
 import numpy as np
-from tqdm import tqdm
 import treelite
 from utils.assets import GeneTissueManifestLookup
 from typing import List
@@ -166,7 +165,7 @@ class ADriskFromVCF:
             pd.DataFrame: DataFrame with added AD risk predictions.
         """
         all_preds_probas = []
-        for _, row in tqdm(preds_df.iterrows(), desc="Running AD predictor"):
+        for _, row in preds_df.iterrows():
             predictor_fname = self.ad_preds.get_file_path(row.gene_id, row.tissue_id)
             predictor = treelite.Model.deserialize(predictor_fname)
             preds_proba = treelite.gtil.predict(predictor, row.embedding)
