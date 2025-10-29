@@ -279,7 +279,6 @@ class VEPDataset:
     ) -> Tuple[pd.DataFrame, Dict]:
         """Load gene CRE and sequence data"""
         # Load gene CREs
-
         mutated_seq = ExtractSeqFromBed(
             neighbour_hood=self.gene_downstream_neighbour_hood,
             ref_fasta=self.fasta_path,

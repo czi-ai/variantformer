@@ -18,6 +18,8 @@ from utils.assets import GeneManifestLookup
 class VariantProcessor:
     """Main class for processing variants and predicting pathogenicity"""
 
+    # TODO: needs a major refactor: building paths like this is brittle, we may need a master artefact manifest
+    # and a just in time artefact fetcher from s3/local filesystem that abstracts path building like below
     def __init__(self, model_class: str = "D2C_PCG"):
         # Load configurations
         base_dir = Path(__file__).parent.parent.resolve()
@@ -211,8 +213,8 @@ class VariantProcessor:
             batch_size=1,
             shuffle=False,
             num_workers=self.vep_loader_config.dataloader.num_workers,
-            prefetch_factor=self.vep_loader_config.dataloader.prefetch_factor,
-            pin_memory=True,
+            # prefetch_factor=self.vep_loader_config.dataloader.prefetch_factor,
+            # pin_memory=self.vep_loader_config.dataloader.pin_memory,
             collate_fn=collate_fn,
         )
 

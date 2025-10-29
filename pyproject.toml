@@ -37,7 +37,6 @@ dependencies = [
     "scipy~=1.15.3",
     "tokenizers~=0.21.1",
     "torchmetrics~=1.7.1",
-    "tqdm~=4.67.1",
     "treelite>=4.4.1",
 ]
 
