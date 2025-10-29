@@ -53,6 +53,10 @@ ARTIFACTS = [
         local_path="HG00096.vcf.gz",
     ),
     Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/HG00096.vcf.gz.tbi",
+        local_path="HG00096.vcf.gz.tbi",
+    ),
+    Artifact(
         remote_uri=f"s3://{DEFAULT_BUCKET}/model/v4_ag/checkpoint.pth",
         local_path="v4_ag_epoch9_checkpoint.pth",
     ),
