@@ -227,6 +227,9 @@ class _BaseManifestLookup:
         query = [f"SELECT {select_columns} FROM manifest WHERE"]
         params = []
         conditions = []
+        assert set(query_params.keys()).issubset(set(self.INDEX_COLUMNS)), (
+            f"query_params keys must be a subset of {self.INDEX_COLUMNS}"
+        )
 
         for column in self.INDEX_COLUMNS:
             if column in query_params:
@@ -422,7 +425,7 @@ class CreSequencesManifestLookup(_BaseManifestLookup):
         Returns:
             CreSequenceRecord | None: The record if found, None otherwise
         """
-        results = self._query({"chrom": chromosome, "population": population})
+        results = self._query({"chromosome": chromosome, "population": population})
         return results[0] if results else None
 
     def get_file_path(self, chromosome: str, population: str) -> str | None:
@@ -452,7 +455,7 @@ class CreSequencesManifestLookup(_BaseManifestLookup):
         Returns:
             bool: True if the chromosome exists, False otherwise
         """
-        results = self._query({"chrom": chromosome, "population": population})
+        results = self._query({"chromosome": chromosome, "population": population})
         return len(results) > 0
 
 
