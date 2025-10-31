@@ -11,7 +11,7 @@ import stash as st
 _REPO_ROOT = Path(__file__).parent.parent.resolve()
 VCF_EXAMPLE = _REPO_ROOT / "_artifacts" / "HG00096.vcf.gz"
 
-'''
+
 class Test(unittest.TestCase):
     def setUp(self) -> None:
         # Load target predictions for regression testing
@@ -89,7 +89,7 @@ class Test(unittest.TestCase):
             np.allclose(vcf_exp, raw_exp, atol=1),
             f"VCF predictions: {vcf_exp} do not match raw predictions: {raw_exp}",
         )
-
+    ''' This test needs to be revised
     def test_2(self) -> None:
         print("checkpoint 0")
         # Initialize the processor and get raw predictions for comparison with target
@@ -152,7 +152,8 @@ class Test(unittest.TestCase):
         print(f"✅ Format test passed! Generated {len(predictions_df)} prediction rows")
         print(f"Predictions shape: {predictions_df.shape}")
         print(f"Sample predictions:\n{predictions_df.head()}")
-'''
+        '''
+
 class TestVariantProcessor(unittest.TestCase):
     def setUp(self) -> None:
         # Load target predictions for regression testing
@@ -163,7 +164,7 @@ class TestVariantProcessor(unittest.TestCase):
         self.test_df = st.get('a0063c48')
         self.test_df['chr'] = self.test_df['variant_id'].apply(lambda x: x.split('_')[0])
         self.test_df['pos'] = self.test_df['variant_id'].apply(lambda x: int(x.split('_')[1]))
-        self.test_df = self.test_df.iloc[0:1]
+        self.test_df = self.test_df
         self.temp_dir = tempfile.mkdtemp()
 
     def tearDown(self) -> None:

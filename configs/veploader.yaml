@@ -2,8 +2,8 @@ CRE_BED: '_artifacts/ENCFF234XEZ.bed.gz'
 fasta_path: '_artifacts/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta.gz'
 af_path: '_artifacts/1KG_af_hg38_tables'
 dataloader:
-  num_workers: 0
+  num_workers: 8
   pin_memory: false
   drop_last: false
-  # prefetch_factor: 0
+  prefetch_factor: 8
 precision: bf16-mixed
