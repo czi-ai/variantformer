@@ -158,7 +158,7 @@ class VariantProcessor:
                 mapped += 1
             for gene in probable_genes:
                 if vcf_path is not None and sample_name is not None:
-                    '''
+              
                     self.gene_variant_pairs.append(
                         {
                             "variant": variant,
@@ -168,7 +168,7 @@ class VariantProcessor:
                             "vcf_path": vcf_path,
                         }
                     )
-                    '''
+
                     self.gene_variant_pairs.append(
                         {
                             "variant": variant,

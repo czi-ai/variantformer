@@ -44,7 +44,7 @@ class ExtractSeqFromBed:
                 "-H",
                 "I",
                 "-e",
-                'ALT~"<.*>" || TYPE!="snp"',
+                'ALT~\"<.*>\" || TYPE!=\"snp\"',
                 vcf_file,
             ]
         else:
@@ -54,7 +54,7 @@ class ExtractSeqFromBed:
                 "-H",
                 "I",
                 "-e",
-                'ALT~"<.*>"',
+                'ALT~\"<.*>\"',
                 vcf_file,
             ]
 
@@ -419,7 +419,7 @@ class ExtractSeqFromBed:
                 "-H",
                 "I",
                 "-e",
-                'ALT~"<.*>" || TYPE!="snp"',
+                'ALT~\"<.*>\" || TYPE!=\"snp\"',
                 vcf_file,
             ]
         else:
@@ -429,7 +429,7 @@ class ExtractSeqFromBed:
                 "-H",
                 "I",
                 "-e",
-                'ALT~"<.*>"',
+                'ALT~\"<.*>\"',
                 vcf_file,
             ]
 
