@@ -6,6 +6,9 @@
 
 VariantFormer is a 1.2-billion-parameter hierarchical transformer model that predicts tissue-specific gene expression from personalized diploid genomes. Unlike traditional reference-based models, VariantFormer directly incorporates individual genetic variants to generate tissue-conditioned, person-specific expression predictions across the genome.
 
+## Citation
+VariantFormer: A hierarchical transformer integrating DNA sequences with genetic variations and regulatory landscapes for personalized gene expression prediction. Sayan Ghosal, Youssef Barhomi, Tejaswini Ganapathi, Amy Krystosik, Lakshmi Krishnan,Sashidhar Guntury, Donghui Li, Alzheimer’s Disease Neuroimaging Initiative, Francesco Paolo Casalec and Theofanis Karaletsos. 2025 bioRxiv. DOI: 
+
 ## Key Features
 
 - **Personalized genomic modeling:** Encodes individual genetic variants using IUPAC ambiguity codes, enabling native representation of heterozygous and homozygous genotypes
