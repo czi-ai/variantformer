@@ -99,34 +99,6 @@ ARTIFACTS = [
     ),
 ]
 
-file_path = [
-    'data/1KG_hg38_af_chr1.tsv',
-    'data/1KG_hg38_af_chr10.tsv',
-    'data/1KG_hg38_af_chr11.tsv',
-    'data/1KG_hg38_af_chr12.tsv',
-    'data/1KG_hg38_af_chr13.tsv',
-    'data/1KG_hg38_af_chr14.tsv',
-    'data/1KG_hg38_af_chr15.tsv',
-    'data/1KG_hg38_af_chr16.tsv',
-    'data/1KG_hg38_af_chr17.tsv',
-    'data/1KG_hg38_af_chr18.tsv',
-    'data/1KG_hg38_af_chr19.tsv',
-    'data/1KG_hg38_af_chr2.tsv',
-    'data/1KG_hg38_af_chr20.tsv',
-    'data/1KG_hg38_af_chr21.tsv',
-    'data/1KG_hg38_af_chr22.tsv',
-    'data/1KG_hg38_af_chr3.tsv',
-    'data/1KG_hg38_af_chr4.tsv',
-    'data/1KG_hg38_af_chr5.tsv',
-    'data/1KG_hg38_af_chr6.tsv',
-    'data/1KG_hg38_af_chr7.tsv',
-    'data/1KG_hg38_af_chr8.tsv',
-    'data/1KG_hg38_af_chr9.tsv',
-    'data/1KG_hg38_af_chrX.tsv',
-    'data/1KG_hg38_af_chrY.tsv',
-]
-
-
 def _parse_s3_uri(uri: str) -> tuple[str, str]:
     """Parse s3://bucket/key/path into (bucket, key)"""
     if not uri.startswith("s3://"):
