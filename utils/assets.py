@@ -26,11 +26,30 @@ GENE_CRE_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/model/common/cres_all_genes_manifest.parquet"
 )
 
+GENE_SEQUENCES_MANIFEST_FILE_PATH = (
+    f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/genes_seqs_manifest.parquet"
+)
+
+CRE_SEQUENCES_MANIFEST_FILE_PATH = (
+    f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/cres_seqs_manifest.parquet"
+)
 
 @dataclasses.dataclass
 class GeneRecord:
     gene_id: str
     file_path: str
+
+@dataclasses.dataclass
+class GeneSequenceRecord:
+    gene_id: str
+    file_path: str
+    population: str
+
+@dataclasses.dataclass
+class CreSequenceRecord:
+    chromosome: str
+    file_path: str
+    population: str
 
 
 @dataclasses.dataclass
@@ -40,6 +59,7 @@ class GeneTissueRecord:
     file_path: str
 
 
+# TODO: this can be simplified using pandas on parquet files directly
 class _BaseManifestLookup:
     """
     Search and download indexed files from S3 using a parquet manifest
@@ -207,6 +227,9 @@ class _BaseManifestLookup:
         query = [f"SELECT {select_columns} FROM manifest WHERE"]
         params = []
         conditions = []
+        assert set(query_params.keys()).issubset(set(self.INDEX_COLUMNS)), (
+            f"query_params keys must be a subset of {self.INDEX_COLUMNS}"
+        )
 
         for column in self.INDEX_COLUMNS:
             if column in query_params:
@@ -305,6 +328,135 @@ class GeneManifestLookup(_BaseManifestLookup):
             list[GeneRecord]: List of records associated with the gene
         """
         return self._query({"gene_id": gene_id})
+
+
+class GeneSequencesManifestLookup(_BaseManifestLookup):
+    """
+    Search and download gene/cre sequences -indexed files from S3 using a parquet manifest
+    """
+
+    INDEX_COLUMNS = ("gene_id", "population")
+    RECORD_CLASS = GeneSequenceRecord
+    # DEFAULT_MANIFEST_PATH = GENE_SEQUENCES_MANIFEST_FILE_PATH
+    ##################### the lines below can be removed when the assets are on s3
+    logger.warning("Using hardcoded manifest path for GeneSequencesManifestLookup")
+    DEFAULT_MANIFEST_PATH = "/mnt/czi-sci-ai/intrinsic-variation-gene-ex/youssef/src/variantformer/_artifacts/genes_seqs_manifest.parquet"
+    
+    def __init__(self, manifest_file_path=None, tmp_dir=None, aws_credentials=None):
+        logger.warning("Using hardcoded manifest path for GeneSequencesManifestLookup")
+        super().__init__(manifest_file_path, tmp_dir, aws_credentials)
+        # Override the bucket property from base class
+        self.bucket = DEFAULT_BUCKET
+    #####################
+
+    def get_record(self, gene_id: str, population: str) -> GeneSequenceRecord | None:
+        """
+        Get the record for a specific gene_id and population combination.
+        This does not download the file (use get_file_path)
+
+        Args:
+            gene_id (str): The gene identifier
+            population (str): The population identifier
+
+        Returns:
+            GeneSequenceRecord | None: The record if found, None otherwise
+        """
+        results = self._query({"gene_id": gene_id, "population": population})
+        return results[0] if results else None
+
+    def get_file_path(self, gene_id: str, population: str) -> str | None:
+        """
+        Returns local file_path after downloading from S3 if needed.
+
+        Args:
+            gene_id (str): The gene identifier
+            population (str): The population identifier
+
+        Returns:
+            str | None: Local file path if gene exists, None otherwise
+        """
+        record = self.get_record(gene_id, population)
+        if not record:
+            return None
+        return self._read_s3_file(record.file_path)
+
+    def exists(self, gene_id: str, population: str) -> bool:
+        """
+        Check if a gene_id exists in the data.
+
+        Args:
+            gene_id (str): The gene identifier
+            population (str): The population identifier
+
+        Returns:
+            bool: True if the gene exists, False otherwise
+        """
+        results = self._query({"gene_id": gene_id, "population": population})
+        return len(results) > 0
+
+class CreSequencesManifestLookup(_BaseManifestLookup):
+    """
+    Search and download gene/cre sequences -indexed files from S3 using a parquet manifest
+    """
+
+    INDEX_COLUMNS = ("chromosome", "population")
+    RECORD_CLASS = CreSequenceRecord
+    #DEFAULT_MANIFEST_PATH = CRE_SEQUENCES_MANIFEST_FILE_PATH
+    ##################### the lines below can be removed when the assets are on s3
+    logger.warning("Using hardcoded manifest path for CreSequencesManifestLookup")
+    DEFAULT_MANIFEST_PATH = "/mnt/czi-sci-ai/intrinsic-variation-gene-ex/youssef/src/variantformer/_artifacts/cres_seqs_manifest.parquet"
+    
+    def __init__(self, manifest_file_path=None, tmp_dir=None, aws_credentials=None):
+        logger.warning("Using hardcoded manifest path for CreSequencesManifestLookup")
+        super().__init__(manifest_file_path, tmp_dir, aws_credentials)
+        # Override the bucket property from base class
+        self.bucket = DEFAULT_BUCKET
+    #####################
+
+    def get_record(self, chromosome: str, population: str) -> CreSequenceRecord | None:
+        """
+        Get the record for a specific chromosome and population combination.
+        This does not download the file (use get_file_path)
+
+        Args:
+            chromosome (str): The chromosome identifier
+            population (str): The population identifier
+
+        Returns:
+            CreSequenceRecord | None: The record if found, None otherwise
+        """
+        results = self._query({"chromosome": chromosome, "population": population})
+        return results[0] if results else None
+
+    def get_file_path(self, chromosome: str, population: str) -> str | None:
+        """
+        Returns local file_path after downloading from S3 if needed.
+
+        Args:
+            chromosome (str): The chromosome identifier
+            population (str): The population identifier
+
+        Returns:
+            str | None: Local file path if chromosome exists, None otherwise
+        """
+        record = self.get_record(chromosome, population)
+        if not record:
+            return None
+        return self._read_s3_file(record.file_path)
+
+    def exists(self, chromosome: str, population: str) -> bool:
+        """
+        Check if a chromosome exists in the data.
+
+        Args:
+            chromosome (str): The chromosome identifier
+            population (str): The population identifier
+
+        Returns:
+            bool: True if the chromosome exists, False otherwise
+        """
+        results = self._query({"chromosome": chromosome, "population": population})
+        return len(results) > 0
 
 
 class GeneTissueManifestLookup(_BaseManifestLookup):

@@ -44,7 +44,7 @@ class ExtractSeqFromBed:
                 "-H",
                 "I",
                 "-e",
-                'ALT~"<.*>" || TYPE!="snp"',
+                'ALT~\"<.*>\" || TYPE!=\"snp\"',
                 vcf_file,
             ]
         else:
@@ -54,7 +54,7 @@ class ExtractSeqFromBed:
                 "-H",
                 "I",
                 "-e",
-                'ALT~"<.*>"',
+                'ALT~\"<.*>\"',
                 vcf_file,
             ]
 
@@ -67,6 +67,7 @@ class ExtractSeqFromBed:
         )
         samtools_process.stdout.close()
         samtools_stderr = samtools_process.stderr.read()
+        samtools_process.stderr.close()
         samtools_process.wait()
 
         # If bcftools consensus fails, return the reference sequence
@@ -419,7 +420,7 @@ class ExtractSeqFromBed:
                 "-H",
                 "I",
                 "-e",
-                'ALT~"<.*>" || TYPE!="snp"',
+                'ALT~\"<.*>\" || TYPE!=\"snp\"',
                 vcf_file,
             ]
         else:
@@ -429,7 +430,7 @@ class ExtractSeqFromBed:
                 "-H",
                 "I",
                 "-e",
-                'ALT~"<.*>"',
+                'ALT~\"<.*>\"',
                 vcf_file,
             ]
 
@@ -442,6 +443,7 @@ class ExtractSeqFromBed:
         )
         samtools_process.stdout.close()
         samtools_stderr = samtools_process.stderr.read()
+        samtools_process.stderr.close()
         samtools_process.wait()
 
         if result.returncode != 0:

@@ -196,11 +196,12 @@ def merge_pop_stat(df, af_path):
         ).reset_index(drop=True)
         allele_merged_dfs.append(merged_df)
     all_merged_dfs = pd.concat(allele_merged_dfs, ignore_index=True)
-    all_merged_dfs["AF_EUR"] = all_merged_dfs["AF_EUR"].map({".": np.nan}).astype(float)
-    all_merged_dfs["AF_AFR"] = all_merged_dfs["AF_AFR"].map({".": np.nan}).astype(float)
-    all_merged_dfs["AF_EAS"] = all_merged_dfs["AF_EAS"].map({".": np.nan}).astype(float)
-    all_merged_dfs["AF_SAS"] = all_merged_dfs["AF_SAS"].map({".": np.nan}).astype(float)
-    all_merged_dfs["AF_AMR"] = all_merged_dfs["AF_AMR"].map({".": np.nan}).astype(float)
+    print(all_merged_dfs)
+    all_merged_dfs["AF_EUR"] = all_merged_dfs["AF_EUR"].replace(".", np.nan).astype(float)
+    all_merged_dfs["AF_AFR"] = all_merged_dfs["AF_AFR"].replace(".", np.nan).astype(float)
+    all_merged_dfs["AF_EAS"] = all_merged_dfs["AF_EAS"].replace(".", np.nan).astype(float)
+    all_merged_dfs["AF_SAS"] = all_merged_dfs["AF_SAS"].replace(".", np.nan).astype(float)
+    all_merged_dfs["AF_AMR"] = all_merged_dfs["AF_AMR"].replace(".", np.nan).astype(float)
     return all_merged_dfs
 
 
