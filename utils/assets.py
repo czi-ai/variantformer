@@ -20,16 +20,14 @@ DEFAULT_BUCKET="czi-variantformer"
 
 
 GENE_TISSUE_MANIFEST_FILE_PATH = (
-    f"s3://{DEFAULT_BUCKET}/alzheimer_disease/v4_pcg/manifest.parquet"
+    f"s3://{DEFAULT_BUCKET}/alzheimer_disease/<model_class>/manifest.parquet"
 )
 GENE_CRE_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/model/common/cres_all_genes_manifest.parquet"
 )
-
 GENE_SEQUENCES_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/genes_seqs_manifest.parquet"
 )
-
 CRE_SEQUENCES_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/cres_seqs_manifest.parquet"
 )
@@ -77,6 +75,7 @@ class _BaseManifestLookup:
         manifest_file_path: str = None,
         tmp_dir: str = None,
         aws_credentials: dict = None,
+        model_class: str = None,
     ):
         """
         Initialize the ManifestLookup with data from a parquet file.
@@ -89,6 +88,8 @@ class _BaseManifestLookup:
             FileNotFoundError: If the parquet file doesn't exist
             ValueError: If the parquet file doesn't have required columns
         """
+        if model_class:
+            self.DEFAULT_MANIFEST_PATH = self.DEFAULT_MANIFEST_PATH.replace("<model_class>", model_class)
         manifest_file_path = manifest_file_path or self.DEFAULT_MANIFEST_PATH
 
         if not manifest_file_path:

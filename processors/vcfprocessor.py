@@ -21,7 +21,7 @@ log.setLevel(logging.INFO)
 
 
 class VCFProcessor:
-    def __init__(self, model_class: str = "D2C_PCG"):
+    def __init__(self, model_class: str = "v4_pcg"):
         base_dir = Path(__file__).parent.parent.resolve()
         self.config_location = base_dir / "configs"
         model_config_path = self.config_location / "d2c_model.yaml"

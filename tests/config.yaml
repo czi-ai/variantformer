@@ -1,24 +1,4 @@
-V0:
-  checkpoint_path: _artifacts/epoch9_checkpoint.pth
-  emb_dim: 1472
-  gencode: _artifacts/all_genes_v1_pcg_gencodeV24.csv
-  train_config: _artifacts/train.yaml
-V1_AG:
-  checkpoint_path: _artifacts/v1_ag_flash2_epoch5_checkpoint.pth
-  emb_dim: 1792
-  gencode: _artifacts/all_genes_ag_gencodeV24.csv
-  train_config: _artifacts/v1_ag_flash2_train.yaml
-V1_PCG:
-  checkpoint_path: _artifacts/v1_pcg_flash3_epoch14_checkpoint.pth
-  emb_dim: 1536
-  gencode: _artifacts/all_genes_v1_pcg_gencodeV24.csv
-  train_config: _artifacts/v1_pcg_flash3_train.yaml
-V2_PCG:
-  checkpoint_path: _artifacts/v2_pcg_flash2_epoch7_checkpoint.pth
-  emb_dim: 1536
-  gencode: _artifacts/all_genes_v1_pcg_gencodeV24.csv
-  train_config: _artifacts/v2_pcg_flash2_train.yaml
-V4_PCG:
+v4_pcg:
   checkpoint_path: _artifacts/v4_pcg_epoch11_checkpoint.pth
   emb_dim: 1536
   gencode: _artifacts/all_genes_v1_pcg_gencodeV24.csv

@@ -25,10 +25,10 @@ class ADrisk:
         Args:
             gene_id (str): Gene ID.
             tissue_id (str): Tissue ID.
-            model_class (str): v4_ag or v4_pcg
+            model_class (str): v4_pcg
         """
         assert model_class in [
-            "v4_ag",
+            # "v4_ag", # not yet available on the public bucket
             "v4_pcg",
         ], "model_class should be either 'v4_ag' or 'v4_pcg'"
         assert type(tissue_id) is int, "tissue_id should be an integer"
@@ -36,7 +36,7 @@ class ADrisk:
         self.gene_id = gene_id
         self.tissue_id = tissue_id
         self.model_class = model_class
-        self.gene_tissue_manifest = GeneTissueManifestLookup()
+        self.gene_tissue_manifest = GeneTissueManifestLookup(model_class=self.model_class)
         self.ad_preds = self._load_ad_predictor()
 
     def __call__(self, gene_tissue_embeds: np.ndarray) -> pd.DataFrame:
@@ -67,7 +67,7 @@ class ADrisk:
 
 
 class ADriskFromVCF:
-    def __init__(self, model_class: str = "D2C_PCG"):
+    def __init__(self, model_class: str = "v4_pcg"):
         """
         Initialize the ADrisk predictor.
 
@@ -75,7 +75,7 @@ class ADriskFromVCF:
             model_class (str): The model class to use for predictions.
         """
         self.model_class = model_class
-        self.ad_preds = GeneTissueManifestLookup()
+        self.ad_preds = GeneTissueManifestLookup(model_class=self.model_class)
         self._init_model()
 
     def _init_model(self):

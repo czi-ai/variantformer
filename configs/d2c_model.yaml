@@ -1,4 +1,4 @@
-D2C_PCG:
+v4_pcg:
   dataset:
     max_length: 200
     max_chunks: 200
@@ -39,7 +39,7 @@ D2C_PCG:
       path: _artifacts/pretrained_tokenizers_checkpoint.pth
     gene_tokenizer:
       path: _artifacts/pretrained_tokenizers_checkpoint.pth
-D2C_AG:
+v4_ag:
   dataset:
     max_length: 200
     max_chunks: 200

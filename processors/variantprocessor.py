@@ -28,7 +28,7 @@ class VariantProcessor:
 
     # TODO: needs a major refactor: building paths like this is brittle, we may need a master artifact manifest
     # and a just in time artifact fetcher from s3/local filesystem that abstracts path building like below
-    def __init__(self, model_class: str = "D2C_PCG"):
+    def __init__(self, model_class: str = "v4_pcg"):
         # Load configurations
         base_dir = Path(__file__).parent.parent.resolve()
         self.config_location = base_dir / "configs"

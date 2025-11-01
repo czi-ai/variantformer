@@ -29,8 +29,8 @@ class Test(unittest.TestCase):
     def setUp(self) -> None:
         # Load target predictions for regression testing
         self.target_predictions = np.load(_REPO_ROOT / "_artifacts" / "befd2388.npz")
-        model_class = "D2C_PCG"
-        # model_class = "D2C_AG"
+        model_class = "v4_pcg"
+        # model_class = "v4_ag"
         self.processor = VariantProcessor(model_class=model_class)
         log.info(f"Model class: {model_class}")
         # Create test data similar to the notebook
@@ -170,10 +170,10 @@ class Test(unittest.TestCase):
 class TestVariantProcessor(unittest.TestCase):
     def setUp(self) -> None:
         # Load target predictions for regression testing
-        model_class = "D2C_PCG"
-        # model_class = "D2C_AG"
+        model_class = "v4_pcg"
+        # model_class = "v4_ag"
         self.processor = VariantProcessor(model_class=model_class)
-        self.processor_ag = VariantProcessor(model_class = 'D2C_AG')
+        self.processor_ag = VariantProcessor(model_class = 'v4_ag')
         log.info(f"Model class: {model_class}")
         self.test_df = st.get('a0063c48')
         self.test_df['chr'] = self.test_df['variant_id'].apply(lambda x: x.split('_')[0])
@@ -341,7 +341,7 @@ class TestVariantProcessorAnVcfProcessor(unittest.TestCase):
         Set up the test case with a sample VariantProcessor and VCFProcessor instance and test data.
         """
         self.vcf_df = pd.read_parquet(_REPO_ROOT / "_artifacts" / "f9bbc0ba.pq")
-        model_class = "D2C_AG"
+        model_class = "v4_ag"
         self.variant_processor = VariantProcessor(model_class=model_class)
         self.vcf_processor = VCFProcessor(model_class=model_class)
 

@@ -21,7 +21,7 @@ TISSUE_MAP_GUID = "be73e19a"
 
 class TestGeneExpressionAndEmbedding(unittest.TestCase):
     def setUp(self) -> None:
-        self.vcf_processor = VCFProcessor(model_class="D2C_PCG")
+        self.vcf_processor = VCFProcessor(model_class="v4_pcg")
         simple_query = {
             "gene_id": ["ENSG00000000457.13"] * 2,
             "tissues": ["whole blood,thyroid,artery - aorta", "brain - amygdala"],
