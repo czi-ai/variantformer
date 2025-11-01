@@ -16,6 +16,15 @@ import boto3
 from botocore import UNSIGNED
 from botocore.config import Config
 
+import logging
+logging.basicConfig(
+   level=logging.INFO,
+   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
+   )
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+
 
 @dataclasses.dataclass
 class Artifact:
@@ -97,6 +106,102 @@ ARTIFACTS = [
         remote_uri=f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/data/hg38/genes/data/ENSG00000130203.9_hg38.npz",
         local_path="reference_genomes/data/hg38/genes/data/ENSG00000130203.9_hg38.npz",
     ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr1.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr1.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr2.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr2.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr3.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr3.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr4.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr4.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr5.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr5.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr6.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr6.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr7.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr7.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr8.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr8.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr9.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr9.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr10.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr10.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr11.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr11.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr12.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr12.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr13.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr13.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr14.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr14.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr15.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr15.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr16.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr16.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr17.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr17.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr18.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr18.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr19.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr19.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr20.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr20.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr21.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr21.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chr22.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chr22.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chrX.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chrX.tsv",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/data/1KG_af_hg38_tables/1KG_hg38_af_chrY.tsv",
+        local_path="1KG_af_hg38_tables/1KG_hg38_af_chrY.tsv",
+    ),
 ]
 
 def _parse_s3_uri(uri: str) -> tuple[str, str]:
@@ -151,6 +256,7 @@ def _download_file(client, bucket: str, key: str, local_path: pathlib.Path):
     local_path.parent.mkdir(parents=True, exist_ok=True)
 
     client.download_file(bucket, key, str(local_path))
+    log.info(f"Downloaded s3://{bucket}/{key} to {local_path}")
 
 
 def download(client, destination: pathlib.Path) -> list[str]:
@@ -221,8 +327,8 @@ def main(
     try:
         _validate()
     except Exception as e:
-        print("ABORTING DOWNLOAD", file=sys.stderr)
-        print(e, file=sys.stderr)
+        log.error("ABORTING DOWNLOAD")
+        log.error(e)
         sys.exit(1)
 
     credentials = (
@@ -252,9 +358,9 @@ def main(
     errors = download(client, destination)
 
     if errors:
-        print("\nErrors encountered during download:", file=sys.stderr)
+        log.error("Errors encountered during download:")
         for error in errors:
-            print(f"  - {error}", file=sys.stderr)
+            log.error(f"  - {error}")
         sys.exit(1)
 
 

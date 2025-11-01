@@ -8,6 +8,14 @@ import shutil
 import stash as st
 import subprocess
 import tempfile
+import logging
+logging.basicConfig(
+   level=logging.INFO,
+   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
+   )
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 from processors.vcfprocessor import VCFProcessor
 from processors.variantprocessor import VariantProcessor
@@ -21,10 +29,10 @@ class Test(unittest.TestCase):
     def setUp(self) -> None:
         # Load target predictions for regression testing
         self.target_predictions = np.load(_REPO_ROOT / "_artifacts" / "befd2388.npz")
-        model_class = "D2C_PCG"
-        # model_class = "D2C_AG"
+        model_class = "v4_pcg"
+        # model_class = "v4_ag"
         self.processor = VariantProcessor(model_class=model_class)
-        print("Model class: ", model_class)
+        log.info(f"Model class: {model_class}")
         # Create test data similar to the notebook
         self.test_data = {
             "chr": ["chr13"],
@@ -65,13 +73,13 @@ class Test(unittest.TestCase):
             (raw_predictions["sample_name"] == self.sample_name)
             & (raw_predictions["zygosity"] == "2")
         ]["gene_exp"]
-        print(
+        log.info(
             vcf_predictions[
                 (vcf_predictions["sample_name"] == self.sample_name)
                 & (vcf_predictions["zygosity"] == "2")
             ]
         )
-        print(
+        log.info(
             raw_predictions[
                 (raw_predictions["sample_name"] == self.sample_name)
                 & (raw_predictions["zygosity"] == "2")
@@ -96,32 +104,32 @@ class Test(unittest.TestCase):
         )
     '''
     def test_2(self) -> None:
-        print("checkpoint 0")
+        log.info("checkpoint 0")
         # Initialize the processor and get raw predictions for comparison with target
         vep_dataset, dataloader, model, trainer, ckpt_path = self.processor.initialize(
             var_df=self.test_df, output_dir=self.temp_dir
         )
 
-        print("checkpoint 1")
+        log.info("checkpoint 1")
         # Get raw predictions for comparison with target predictions
         raw_predictions = trainer.predict(
             model=model, dataloaders=dataloader, ckpt_path=ckpt_path
         )
 
-        print("checkpoint 2")
+        log.info("checkpoint 2")
         for key in raw_predictions[0].keys():
             cur_pred = np.array(raw_predictions[0][key])
             target_pred = self.target_predictions[key]
-            print(f"Checking predictions for key: {key}")
+            log.info(f"Checking predictions for key: {key}")
             np.testing.assert_allclose(cur_pred, target_pred)
 
-        print("checkpoint 3")
+        log.info("checkpoint 3")
         # Compile predictions to DataFrame and validate format
         predictions_df = self.processor.compile_predictions(raw_predictions)
         # Clean up resources
         self.processor.cleanup()
 
-        print("checkpoint 4")
+        log.info("checkpoint 4")
         # Basic assertions to verify the DataFrame format
         self.assertIsInstance(predictions_df, pd.DataFrame)
         self.assertGreater(len(predictions_df), 0)
@@ -153,20 +161,20 @@ class Test(unittest.TestCase):
         # Verify gene expression predictions are numeric
         self.assertTrue(np.issubdtype(predictions_df["gene_exp"].dtype, np.number))
 
-        print("✅ Regression test passed! Raw predictions match target predictions.")
-        print(f"✅ Format test passed! Generated {len(predictions_df)} prediction rows")
-        print(f"Predictions shape: {predictions_df.shape}")
-        print(f"Sample predictions:\n{predictions_df.head()}")
+        log.info("✅ Regression test passed! Raw predictions match target predictions.")
+        log.info(f"✅ Format test passed! Generated {len(predictions_df)} prediction rows")
+        log.info(f"Predictions shape: {predictions_df.shape}")
+        log.info(f"Sample predictions:\n{predictions_df.head()}")
         '''
 
 class TestVariantProcessor(unittest.TestCase):
     def setUp(self) -> None:
         # Load target predictions for regression testing
-        model_class = "D2C_PCG"
-        # model_class = "D2C_AG"
+        model_class = "v4_pcg"
+        # model_class = "v4_ag"
         self.processor = VariantProcessor(model_class=model_class)
-        self.processor_ag = VariantProcessor(model_class = 'D2C_AG')
-        print("Model class: ", model_class)
+        self.processor_ag = VariantProcessor(model_class = 'v4_ag')
+        log.info(f"Model class: {model_class}")
         self.test_df = st.get('a0063c48')
         self.test_df['chr'] = self.test_df['variant_id'].apply(lambda x: x.split('_')[0])
         self.test_df['pos'] = self.test_df['variant_id'].apply(lambda x: int(x.split('_')[1]))
@@ -182,17 +190,17 @@ class TestVariantProcessor(unittest.TestCase):
         var = var.rename(columns={'tissues':'tissue', 'genes':'gene_id'})
         # Get raw predictions for comparison with target predictions
         raw_predictions = self.processor.predict(var_df=var, output_dir=self.temp_dir, vcf_path=VCF_EXAMPLE, sample_name='HG00096')
-        print("checkpoint 2.1")
+        log.info("checkpoint 2.1")
         # Compile predictions to DataFrame and validate format
         predictions_df = self.processor.format_scores(raw_predictions)
         final_results = self.processor.eqtl_scores(predictions_df)
         assert(all(final_results==self.vcf_df)), f"Regression test failed: Predictions {final_results} do not match target {self.vcf_df}"
     def test_2(self) -> None:
-        print("checkpoint 1")
+        log.info("checkpoint 1")
         # Get raw predictions for comparison with target predictions
         raw_predictions = self.processor_ag.predict(var_df=self.test_df, output_dir=self.temp_dir)
 
-        print("checkpoint 2.1")
+        log.info("checkpoint 2.1")
         # Compile predictions to DataFrame and validate format
         predictions_df = self.processor_ag.format_scores(raw_predictions)
 
@@ -206,7 +214,7 @@ class TestVariantProcessor(unittest.TestCase):
             f"SAS score predictions: {sas_score_pred} do not match target scores: {sas_score_target}",
         )
 
-        print("checkpoint 2.2")
+        log.info("checkpoint 2.2")
         eur_score_pred = final_results['D2C-EUR-2-exp-log2fc'].values
         eur_score_target = self.test_df['D2C-EUR-2-log2fc_ag'].values
 
@@ -214,7 +222,7 @@ class TestVariantProcessor(unittest.TestCase):
             np.allclose(eur_score_pred, eur_score_target, atol=1e-3),
             f"EUR score predictions: {eur_score_pred} do not match target scores: {eur_score_target}",
         )
-        print("checkpoint 2.3")
+        log.info("checkpoint 2.3")
         afr_score_pred = final_results['D2C-AFR-2-exp-log2fc'].values
         afr_score_target = self.test_df['D2C-AFR-2-log2fc_ag'].values
         self.assertTrue(
@@ -222,7 +230,7 @@ class TestVariantProcessor(unittest.TestCase):
             f"AFR score predictions: {afr_score_pred} do not match target scores: {afr_score_target}",
         )
 
-        print("checkpoint 2.4")
+        log.info("checkpoint 2.4")
         amr_score_pred = final_results['D2C-AMR-2-exp-log2fc'].values
         amr_score_target = self.test_df['D2C-AMR-2-log2fc_ag'].values
         self.assertTrue(
@@ -230,7 +238,7 @@ class TestVariantProcessor(unittest.TestCase):
             f"AMR score predictions: {amr_score_pred} do not match target scores: {amr_score_target}",
         )   
 
-        print("checkpoint 2.5")
+        log.info("checkpoint 2.5")
         eas_score_pred = final_results['D2C-EAS-2-exp-log2fc'].values
         eas_score_target = self.test_df['D2C-EAS-2-log2fc_ag'].values
         self.assertTrue(
@@ -238,7 +246,7 @@ class TestVariantProcessor(unittest.TestCase):
             f"EAS score predictions: {eas_score_pred} do not match target scores: {eas_score_target}",
         )
 
-        print("checkpoint 2.6")
+        log.info("checkpoint 2.6")
         weighted_score_pred = final_results['D2C-agg-log2fc-weighted'].values
         weighted_score_target = self.test_df['D2C-agg-log2fc-weighted_ag'].values
         self.assertTrue(
@@ -249,16 +257,16 @@ class TestVariantProcessor(unittest.TestCase):
         # Clean up resources
         self.processor.cleanup()
 
-        print("checkpoint 3")
+        log.info("checkpoint 3")
         # Basic assertions to verify the DataFrame format
         self.assertIsInstance(predictions_df, pd.DataFrame)
         self.assertGreater(len(predictions_df), 0)
     def test_3(self) -> None:
-        print("checkpoint 1")
+        log.info("checkpoint 1")
         # Get raw predictions for comparison with target predictions
         raw_predictions = self.processor.predict(var_df=self.test_df, output_dir=self.temp_dir)
 
-        print("checkpoint 2.1")
+        log.info("checkpoint 2.1")
         # Compile predictions to DataFrame and validate format
         predictions_df = self.processor.format_scores(raw_predictions)
 
@@ -272,7 +280,7 @@ class TestVariantProcessor(unittest.TestCase):
             f"SAS score predictions: {sas_score_pred} do not match target scores: {sas_score_target}",
         )
 
-        print("checkpoint 2.2")
+        log.info("checkpoint 2.2")
         eur_score_pred = final_results['D2C-EUR-2-exp-log2fc'].values
         eur_score_target = self.test_df['D2C-EUR-2-log2fc_pcg'].values
 
@@ -280,7 +288,7 @@ class TestVariantProcessor(unittest.TestCase):
             np.allclose(eur_score_pred, eur_score_target, atol=1e-3),
             f"EUR score predictions: {eur_score_pred} do not match target scores: {eur_score_target}",
         )
-        print("checkpoint 2.3")
+        log.info("checkpoint 2.3")
         afr_score_pred = final_results['D2C-AFR-2-exp-log2fc'].values
         afr_score_target = self.test_df['D2C-AFR-2-log2fc_pcg'].values
         self.assertTrue(
@@ -288,7 +296,7 @@ class TestVariantProcessor(unittest.TestCase):
             f"AFR score predictions: {afr_score_pred} do not match target scores: {afr_score_target}",
         )
 
-        print("checkpoint 2.4")
+        log.info("checkpoint 2.4")
         amr_score_pred = final_results['D2C-AMR-2-exp-log2fc'].values
         amr_score_target = self.test_df['D2C-AMR-2-log2fc_pcg'].values
         self.assertTrue(
@@ -296,7 +304,7 @@ class TestVariantProcessor(unittest.TestCase):
             f"AMR score predictions: {amr_score_pred} do not match target scores: {amr_score_target}",
         )   
 
-        print("checkpoint 2.5")
+        log.info("checkpoint 2.5")
         eas_score_pred = final_results['D2C-EAS-2-exp-log2fc'].values
         eas_score_target = self.test_df['D2C-EAS-2-log2fc_pcg'].values
         self.assertTrue(
@@ -304,7 +312,7 @@ class TestVariantProcessor(unittest.TestCase):
             f"EAS score predictions: {eas_score_pred} do not match target scores: {eas_score_target}",
         )
 
-        print("checkpoint 2.6")
+        log.info("checkpoint 2.6")
         weighted_score_pred = final_results['D2C-agg-log2fc-weighted'].values
         weighted_score_target = self.test_df['D2C-agg-log2fc-weighted_pcg'].values
         self.assertTrue(
@@ -315,7 +323,7 @@ class TestVariantProcessor(unittest.TestCase):
         # Clean up resources
         self.processor.cleanup()
 
-        print("checkpoint 3")
+        log.info("checkpoint 3")
         # Basic assertions to verify the DataFrame format
         self.assertIsInstance(predictions_df, pd.DataFrame)
         self.assertGreater(len(predictions_df), 0)
@@ -333,7 +341,7 @@ class TestVariantProcessorAnVcfProcessor(unittest.TestCase):
         Set up the test case with a sample VariantProcessor and VCFProcessor instance and test data.
         """
         self.vcf_df = pd.read_parquet(_REPO_ROOT / "_artifacts" / "f9bbc0ba.pq")
-        model_class = "D2C_AG"
+        model_class = "v4_ag"
         self.variant_processor = VariantProcessor(model_class=model_class)
         self.vcf_processor = VCFProcessor(model_class=model_class)
 
@@ -357,8 +365,8 @@ class TestVariantProcessorAnVcfProcessor(unittest.TestCase):
         predictions_df = self.vcf_processor.predict(
             model, checkpoint_path, trainer, dataloader, vcf_dataset
         )
-        print("VCF-based predictions:")
-        print(predictions_df.head(2))
+        log.info("VCF-based predictions:")
+        log.info(predictions_df.head(2))
 
         with tempfile.TemporaryDirectory() as temp_dir:
             variant_vcf_df = self.variant_processor.predict(
@@ -372,8 +380,8 @@ class TestVariantProcessorAnVcfProcessor(unittest.TestCase):
             (variant_vcf_df["sample_name"] == self.vcf_df["name"].iloc[0])
             & (variant_vcf_df["zygosity"] == "0")
         ].reset_index(drop=True)
-        print("Variant-based predictions:")
-        print(variant_based_df.head(2))
+        log.info("Variant-based predictions:")
+        log.info(variant_based_df.head(2))
 
         self.assertTrue(
             np.allclose(

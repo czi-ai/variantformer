@@ -41,7 +41,7 @@ class ModelManager:
                 return True
             except Exception as e:
                 if time.time() - start_time > timeout:
-                    print(f"Download failed after {timeout}s: {e}")
+                    log.info(f"Download failed after {timeout}s: {e}")
                     return False
                 time.sleep(1)
 
@@ -72,7 +72,7 @@ class ModelManager:
         epoch_paths.sort(key=lambda x: int(x.path.split("_")[-1]))
         latest_epoch = epoch_paths[-1].path
 
-        print(f"Downloading checkpoint from {latest_epoch}")
+        log.info(f"Downloading checkpoint from {latest_epoch}")
         artifact_path = f"{latest_epoch}/checkpoint.pth"
 
         def download():
@@ -100,10 +100,10 @@ class ModelManager:
         train_cfg = self.config.copy()
 
         # Load Seq2Reg models
-        print("Loading Seq2Reg model...")
+        log.info("Loading Seq2Reg model...")
         seq2reg = self._load_seq2reg(train_cfg)
 
-        print("Loading Seq2Reg gene model...")
+        log.info("Loading Seq2Reg gene model...")
         seq2reg_gene = self._load_seq2reg_gene(train_cfg)
 
         delattr(train_cfg, "cre_tokenizer")
@@ -119,27 +119,27 @@ class ModelManager:
         }
         model_class = model_classes[train_cfg.get("model_class", "Seq2GenePredictor")]
         # Create Seq2Gene model
-        print("Creating Seq2Gene model...")
+        log.info("Creating Seq2Gene model...")
         gene_model = model_class(
             cre_tokenizer=seq2reg, gene_tokenizer=seq2reg_gene, **train_cfg
         )
 
-        print(f"Model class: {model_class}")
+        log.info(f"Model class: {model_class}")
         # Log model abstraction (layer/module structure)
-        print("Model architecture:")
-        print(f"Model: {gene_model.__class__.__name__}")
+        log.info("Model architecture:")
+        log.info(f"Model: {gene_model.__class__.__name__}")
         for name, module in gene_model.named_children():
             num_params = sum(p.numel() for p in module.parameters())
-            print(f"  {name}: {num_params:,} params")
+            log.info(f"  {name}: {num_params:,} params")
         # Log total number of parameters
         total_params = sum(p.numel() for p in gene_model.parameters())
-        print(f"Total number of parameters: {total_params:,}")
+        log.info(f"Total number of parameters: {total_params:,}")
         # Load checkpoint
         checkpoint_path = self.config.checkpoint_path
         if not os.path.exists(checkpoint_path):
             raise ValueError("Checkpoint not found")
 
-        print(f"Loading checkpoint from {checkpoint_path}")
+        log.info(f"Loading checkpoint from {checkpoint_path}")
         checkpoint = torch.load(checkpoint_path, map_location=self.device)
 
         # Load the state dict into the model
@@ -153,5 +153,5 @@ class ModelManager:
         gene_model.to(self.device)
         gene_model.vep = False  # A model to get all gene expression for all tissues present in the batch
 
-        print(f"Model loaded successfully on {self.device}")
+        log.info(f"Model loaded successfully on {self.device}")
         return gene_model, checkpoint_path

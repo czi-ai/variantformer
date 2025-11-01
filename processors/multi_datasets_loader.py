@@ -2,6 +2,14 @@ import pandas as pd
 from typing import List, Set
 from omegaconf import OmegaConf
 from datasets.vepdataset import Variant
+import logging
+logging.basicConfig(
+   level=logging.INFO,
+   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
+   )
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
 class MultiDatasetsLoader:
@@ -15,10 +23,10 @@ class MultiDatasetsLoader:
 
     def load_annotations(self):
         """Load gene annotations and CRE data"""
-        print("Loading gene annotations...")
+        log.info("Loading gene annotations...")
         self.gencode_genes = pd.read_csv(self.config.gencode)
 
-        print("Loading CRE annotations...")
+        log.info("Loading CRE annotations...")
         self.all_cres = pd.read_csv(self.config.all_cres, sep="\t", header=None)
         self.all_cres.columns = [
             "chromosome",
@@ -44,7 +52,7 @@ class MultiDatasetsLoader:
                 raise ValueError(f"Column {column} not found in {var_df.columns}")
 
         df = df.sort_values(by=["chrom", "pos"]).reset_index(drop=True)
-        print(f"Loaded {len(df)} variants")
+        log.info(f"Loaded {len(df)} variants")
         return df
 
     def get_probable_genes(

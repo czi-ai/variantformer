@@ -31,8 +31,7 @@ class TestADrisk(unittest.TestCase):
         self._init_vcf_processor()
     
     def _init_vcf_processor(self):
-        model_class = 'D2C_' + self.model_class.split('_')[-1].upper()
-        self.vcf_processor = VCFProcessor(model_class=model_class)
+        self.vcf_processor = VCFProcessor(model_class=self.model_class)
         tissues_dict = self.vcf_processor.tissue_vocab
         self.tissue_map = pd.DataFrame({'tissue': list(tissues_dict.keys())}, index=pd.Index(list(tissues_dict.values()), name='tissue_id'))
         self.genes_map = self.vcf_processor.get_genes()

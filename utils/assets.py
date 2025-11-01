@@ -20,16 +20,14 @@ DEFAULT_BUCKET="czi-variantformer"
 
 
 GENE_TISSUE_MANIFEST_FILE_PATH = (
-    f"s3://{DEFAULT_BUCKET}/alzheimer_disease/v4_pcg/manifest.parquet"
+    f"s3://{DEFAULT_BUCKET}/alzheimer_disease/<model_class>/manifest.parquet"
 )
 GENE_CRE_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/model/common/cres_all_genes_manifest.parquet"
 )
-
 GENE_SEQUENCES_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/genes_seqs_manifest.parquet"
 )
-
 CRE_SEQUENCES_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/cres_seqs_manifest.parquet"
 )
@@ -77,6 +75,7 @@ class _BaseManifestLookup:
         manifest_file_path: str = None,
         tmp_dir: str = None,
         aws_credentials: dict = None,
+        model_class: str = None,
     ):
         """
         Initialize the ManifestLookup with data from a parquet file.
@@ -89,6 +88,8 @@ class _BaseManifestLookup:
             FileNotFoundError: If the parquet file doesn't exist
             ValueError: If the parquet file doesn't have required columns
         """
+        if model_class:
+            self.DEFAULT_MANIFEST_PATH = self.DEFAULT_MANIFEST_PATH.replace("<model_class>", model_class)
         manifest_file_path = manifest_file_path or self.DEFAULT_MANIFEST_PATH
 
         if not manifest_file_path:
@@ -337,17 +338,7 @@ class GeneSequencesManifestLookup(_BaseManifestLookup):
 
     INDEX_COLUMNS = ("gene_id", "population")
     RECORD_CLASS = GeneSequenceRecord
-    # DEFAULT_MANIFEST_PATH = GENE_SEQUENCES_MANIFEST_FILE_PATH
-    ##################### the lines below can be removed when the assets are on s3
-    logger.warning("Using hardcoded manifest path for GeneSequencesManifestLookup")
-    DEFAULT_MANIFEST_PATH = "/mnt/czi-sci-ai/intrinsic-variation-gene-ex/youssef/src/variantformer/_artifacts/genes_seqs_manifest.parquet"
-    
-    def __init__(self, manifest_file_path=None, tmp_dir=None, aws_credentials=None):
-        logger.warning("Using hardcoded manifest path for GeneSequencesManifestLookup")
-        super().__init__(manifest_file_path, tmp_dir, aws_credentials)
-        # Override the bucket property from base class
-        self.bucket = DEFAULT_BUCKET
-    #####################
+    DEFAULT_MANIFEST_PATH = GENE_SEQUENCES_MANIFEST_FILE_PATH
 
     def get_record(self, gene_id: str, population: str) -> GeneSequenceRecord | None:
         """
@@ -401,17 +392,7 @@ class CreSequencesManifestLookup(_BaseManifestLookup):
 
     INDEX_COLUMNS = ("chromosome", "population")
     RECORD_CLASS = CreSequenceRecord
-    #DEFAULT_MANIFEST_PATH = CRE_SEQUENCES_MANIFEST_FILE_PATH
-    ##################### the lines below can be removed when the assets are on s3
-    logger.warning("Using hardcoded manifest path for CreSequencesManifestLookup")
-    DEFAULT_MANIFEST_PATH = "/mnt/czi-sci-ai/intrinsic-variation-gene-ex/youssef/src/variantformer/_artifacts/cres_seqs_manifest.parquet"
-    
-    def __init__(self, manifest_file_path=None, tmp_dir=None, aws_credentials=None):
-        logger.warning("Using hardcoded manifest path for CreSequencesManifestLookup")
-        super().__init__(manifest_file_path, tmp_dir, aws_credentials)
-        # Override the bucket property from base class
-        self.bucket = DEFAULT_BUCKET
-    #####################
+    DEFAULT_MANIFEST_PATH = CRE_SEQUENCES_MANIFEST_FILE_PATH
 
     def get_record(self, chromosome: str, population: str) -> CreSequenceRecord | None:
         """

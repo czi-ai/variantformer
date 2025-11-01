@@ -11,16 +11,24 @@ from utils.seq import BPEEncoder
 from torch.utils.data import DataLoader
 import numpy as np
 from lightning.pytorch import Trainer
+import logging
 from utils.functions import generate_log2fc_score
 from utils.assets import GeneManifestLookup, GeneSequencesManifestLookup, CreSequencesManifestLookup
 
+logging.basicConfig(
+   level=logging.INFO,
+   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
+   )
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 class VariantProcessor:
     """Main class for processing variants and predicting pathogenicity"""
 
     # TODO: needs a major refactor: building paths like this is brittle, we may need a master artifact manifest
     # and a just in time artifact fetcher from s3/local filesystem that abstracts path building like below
-    def __init__(self, model_class: str = "D2C_PCG"):
+    def __init__(self, model_class: str = "v4_pcg"):
         # Load configurations
         base_dir = Path(__file__).parent.parent.resolve()
         self.config_location = base_dir / "configs"
@@ -126,7 +134,7 @@ class VariantProcessor:
         sample_name: str = None,
     ):
         """Initialize all components"""
-        print("Initializing Variant Processor...")
+        log.info("Initializing Variant Processor...")
         self.config.output_location = output_dir
         self._setup_output_directory(output_dir)
 
@@ -189,13 +197,13 @@ class VariantProcessor:
                                 "vcf_path": None,
                             }
                         )
-        print(f"Mapped {mapped} gene-variant pairs")
+        log.info(f"Mapped {mapped} gene-variant pairs")
         if mapped == 0:
             raise ValueError(
                 "No gene-variant pairs found. Check your input data and annotations."
             )
         # Setup BPE encoder
-        print("Loading BPE encoder...")
+        log.info("Loading BPE encoder...")
         bpe = BPEEncoder()
         bpe.load_vocabulary(self.bpe_vocab_path)
         # Initialize VEP dataset
@@ -225,10 +233,10 @@ class VariantProcessor:
         )
 
         # Load model
-        print("Loading model...")
+        log.info("Loading model...")
         model, ckpt_path = self.model_manager.load_model()
 
-        print("Initializing trainer...")
+        log.info("Initializing trainer...")
         trainer = Trainer(
             accelerator="gpu",
             devices=1,
@@ -239,12 +247,12 @@ class VariantProcessor:
         # Set VEP flag to True
         model.vep = True
 
-        print("Initialization complete!")
+        log.info("Initialization complete!")
         return vep_dataset, dataloader, model, trainer, ckpt_path
 
     def load_variants(self, var_df: pd.DataFrame) -> List[Variant]:
         """Load and prepare variants for processing"""
-        print("Loading variants...")
+        log.info("Loading variants...")
         variants_df = self.multi_data_loader._load_variants(var_df)
 
         # Get chunk if specified
@@ -256,7 +264,7 @@ class VariantProcessor:
         variants = self.multi_data_loader.create_variant_objects(
             variants_df, self.tissue_vocab
         )
-        print(f"Loaded {len(variants)} variants for processing")
+        log.info(f"Loaded {len(variants)} variants for processing")
         return variants
 
     def _check_variant_exists(self) -> bool:
@@ -303,7 +311,7 @@ class VariantProcessor:
             sample_name = attr["sample_name"]
             variant_type = predictions[i]["variant_type"]
             if len(predictions[i]["pred_gene_exp"]) == 0:
-                print(f"No predictions for {variant.chrom}:{variant.pos} and {gene}")
+                log.info(f"No predictions for {variant.chrom}:{variant.pos} and {gene}")
                 ref_gene_exp = np.full(
                     (len(variant.tissue), 1), np.nan, dtype=np.float32
                 )
@@ -419,7 +427,7 @@ class VariantProcessor:
             df.to_csv(output_file, index=False)
         elif output_file.endswith(".parquet"):
             df.to_parquet(output_file)
-        print(f"Predictions saved to {output_file}")
+        log.info(f"Predictions saved to {output_file}")
         return df
 
     def eqtl_scores(self, df: pd.DataFrame):
@@ -501,4 +509,4 @@ class VariantProcessor:
             if hasattr(torch, "cuda"):
                 torch.cuda.empty_cache()
 
-        print("Cleanup complete")
+        log.info("Cleanup complete")

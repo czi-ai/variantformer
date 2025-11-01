@@ -7,11 +7,21 @@ from torch.utils.data import DataLoader
 from processors.model_manager import ModelManager
 from lightning.pytorch import Trainer
 import torch
+import logging
+
 from utils.assets import GeneManifestLookup
+
+logging.basicConfig(
+   level=logging.INFO,
+   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
+   )
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
 class VCFProcessor:
-    def __init__(self, model_class: str = "D2C_PCG"):
+    def __init__(self, model_class: str = "v4_pcg"):
         base_dir = Path(__file__).parent.parent.resolve()
         self.config_location = base_dir / "configs"
         model_config_path = self.config_location / "d2c_model.yaml"
@@ -115,10 +125,10 @@ def test_vcf_processor():
     # Test getting tissues and genes
     tissues = vcf_processor.get_tissues()
     genes = vcf_processor.get_genes()
-    print("Available tissues:")
-    print(tissues)
-    print("Available genes first 5:")
-    print(genes.head())
+    log.info("Available tissues:")
+    log.info(tissues)
+    log.info("Available genes first 5:")
+    log.info(genes.head())
 
     # Test data creation and prediction
     vcf_path = "/app/_artifacts/HG00096.vcf.gz"
@@ -134,8 +144,8 @@ def test_vcf_processor():
         model, checkpoint_path, trainer, dataloader, vcf_dataset
     )
 
-    print(predictions)
-    print("Finished predictions")
+    log.info(predictions)
+    log.info("Finished predictions")
 
     # Basic assertions to validate the test
     assert tissues is not None, "Tissues should not be None"
