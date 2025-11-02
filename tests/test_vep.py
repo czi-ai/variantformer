@@ -176,10 +176,14 @@ class TestVariantProcessor(unittest.TestCase):
         self.processor_ag = VariantProcessor(model_class = 'v4_ag')
         log.info(f"Model class: {model_class}")
         self.test_df = st.get('a0063c48')
+        rename_cols ={col: col.replace('D2C', 'VF') for col in self.test_df}
+        self.test_df.rename(columns=rename_cols, inplace=True)
         self.test_df['chr'] = self.test_df['variant_id'].apply(lambda x: x.split('_')[0])
         self.test_df['pos'] = self.test_df['variant_id'].apply(lambda x: int(x.split('_')[1]))
         self.test_df = self.test_df
         self.vcf_df = st.get('9a83db58')
+        rename_cols ={col: col.replace('D2C', 'VF') for col in self.vcf_df}
+        self.vcf_df.rename(columns=rename_cols, inplace=True)
         self.temp_dir = tempfile.mkdtemp()
 
     def tearDown(self) -> None:
