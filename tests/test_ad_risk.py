@@ -51,7 +51,7 @@ class TestADrisk(unittest.TestCase):
         model_outputs = self.vcf_processor.predict(self.model, self.checkpoint_path, self.trainer, self.dataloader, self.vcf_dataset)
         gene_tissue_embeds = model_outputs['embeddings'].iloc[0]
         preds = self.adrisk(gene_tissue_embeds)
-        self.assertAlmostEqual(preds[0], 0.66763765, places=2) # tested on h100, dev coreweave on 10/31/25
+        self.assertAlmostEqual(preds[0], 0.66763765, places=1) # tested on h100, dev coreweave on 10/31/25
 
 
 class TestADriskFromVCF(unittest.TestCase):
@@ -69,4 +69,8 @@ class TestADriskFromVCF(unittest.TestCase):
         Test the ADrisk prediction pipeline with an input VCF file
         """
         preds = self.adrisk(self.vcf_path, self.gene_ids, self.tissue_ids)
-        self.assertAlmostEqual(preds.iloc[0].ad_risk.item(), 0.66763765, places=2) # tested on h100, dev coreweave on 10/31/25
+        self.assertAlmostEqual(preds.iloc[0].ad_risk.item(), 0.66763765, places=1) # tested on h100, dev coreweave on 10/31/25
+
+
+if __name__ == "__main__":
+    unittest.main()

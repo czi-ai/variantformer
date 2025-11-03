@@ -32,7 +32,7 @@ class VariantProcessor:
         # Load configurations
         base_dir = Path(__file__).parent.parent.resolve()
         self.config_location = base_dir / "configs"
-        model_config_path = self.config_location / "d2c_model.yaml"
+        model_config_path = self.config_location / "vf_model.yaml"
         model_config = OmegaConf.load(model_config_path)[model_class]
         vep_loader_config = OmegaConf.load(base_dir / "configs" / "veploader.yaml")
 
@@ -281,9 +281,9 @@ class VariantProcessor:
         )
         if "chunks" in self.config and self.config.chunks > 1:
             # If processing in chunks, append chunk_id to filename
-            filename = f"{input_file.split('/')[-1].split('.')[0]}_chunk{self.config.chunk_id}_D2C.parquet"
+            filename = f"{input_file.split('/')[-1].split('.')[0]}_chunk{self.config.chunk_id}_VF.parquet"
         else:
-            filename = f"{input_file.split('/')[-1].split('.')[0]}_D2C.parquet"
+            filename = f"{input_file.split('/')[-1].split('.')[0]}_VF.parquet"
         return os.path.join(self.config.output_location, filename)
 
     def compile_predictions(self, predictions, vcf_path=None):
@@ -479,8 +479,8 @@ class VariantProcessor:
             )
             .reset_index()
         )
-        d2c_vep = df_exp.dropna(subset=["REF_HG38-0-exp"]).reset_index(drop=True)
-        return d2c_vep
+        vf_vep = df_exp.dropna(subset=["REF_HG38-0-exp"]).reset_index(drop=True)
+        return vf_vep
 
     def predict(
         self,

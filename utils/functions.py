@@ -207,17 +207,17 @@ def merge_pop_stat(df, af_path):
 
 def gene_pop_agg_score(df, score_cols, score_type="log2fc"):
     pop_agg_scores = []
-    # remove D2C-REF_HG38-2-Poisson or D2C-REF_HG38-2-exp-log2fc from score_cols if it exists
-    if f"D2C-REF_HG38-2-exp-{score_type}" in score_cols:
+    # remove VF-REF_HG38-2-Poisson or VF-REF_HG38-2-exp-log2fc from score_cols if it exists
+    if f"VF-REF_HG38-2-exp-{score_type}" in score_cols:
         score_cols = [col for col in score_cols if "REF_HG38-2" not in col]
     pop_af_cols = [
         "AF_" + c.split("-")[1]
         for c in score_cols
-        if c.startswith("D2C-AFR-2")
-        or c.startswith("D2C-AMR-2")
-        or c.startswith("D2C-EAS-2")
-        or c.startswith("D2C-EUR-2")
-        or c.startswith("D2C-SAS-2")
+        if c.startswith("VF-AFR-2")
+        or c.startswith("VF-AMR-2")
+        or c.startswith("VF-EAS-2")
+        or c.startswith("VF-EUR-2")
+        or c.startswith("VF-SAS-2")
     ]
     for i, row in df.iterrows():
         pop_scores = row[score_cols].values.astype(float)
@@ -244,7 +244,7 @@ def gene_pop_agg_score(df, score_cols, score_type="log2fc"):
             weighted_score = np.nan
 
         pop_agg_scores.append(weighted_score)
-    df["D2C-agg-" + score_type + "-weighted"] = pop_agg_scores
+    df["VF-agg-" + score_type + "-weighted"] = pop_agg_scores
 
     return df
 
@@ -275,8 +275,8 @@ def generate_log2fc_score(df, af_path):
         ref = np.array(df[ref_col]).flatten()
         ep = 1e-10
         score = np.log2((pop + ep) / (ref + ep))
-        df["D2C-" + col + "-log2fc"] = score
-        score_cols.append("D2C-" + col + "-log2fc")
+        df["VF-" + col + "-log2fc"] = score
+        score_cols.append("VF-" + col + "-log2fc")
     df[score_cols] = df[score_cols].astype(float)
     if len(sample_cols) == 0:
         df = gene_pop_agg_score(
@@ -291,7 +291,7 @@ def generate_log2fc_score(df, af_path):
                 "alt",
                 "chr",
                 "pos",
-                "D2C-agg-log2fc-weighted",
+                "VF-agg-log2fc-weighted",
             ]
             + score_cols
         ]
@@ -328,8 +328,8 @@ def generate_poisson_score(df, af_path):
         ref = np.array(df[ref_col]).flatten()
 
         score = stats.poisson.cdf(pop, ref)
-        df["D2C-" + col + "-Poisson"] = score
-        score_cols.append("D2C-" + col + "-Poisson")
+        df["VF-" + col + "-Poisson"] = score
+        score_cols.append("VF-" + col + "-Poisson")
     df[score_cols] = df[score_cols].astype(float)
     if len(sample_cols) == 0:
         df = gene_pop_agg_score(
@@ -344,7 +344,7 @@ def generate_poisson_score(df, af_path):
                 "alt",
                 "chr",
                 "pos",
-                "D2C-agg-Poisson-weighted",
+                "VF-agg-Poisson-weighted",
             ]
             + score_cols
         ]

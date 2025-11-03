@@ -24,7 +24,7 @@ class VCFProcessor:
     def __init__(self, model_class: str = "v4_pcg"):
         base_dir = Path(__file__).parent.parent.resolve()
         self.config_location = base_dir / "configs"
-        model_config_path = self.config_location / "d2c_model.yaml"
+        model_config_path = self.config_location / "vf_model.yaml"
         self.model_config = OmegaConf.load(model_config_path)[model_class]
         self.tissue_vocab = OmegaConf.load(base_dir / "vocabs" / "tissue_vocab.yaml")
         self.vcf_loader_config = OmegaConf.load(base_dir / "configs" / "vcfloader.yaml")

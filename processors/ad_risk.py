@@ -12,7 +12,7 @@ from typing import List
 from processors import vcfprocessor
 
 _REPO_ROOT = Path(__file__).parent.parent.resolve()
-D2C_DIMS = 1536
+VF_DIMS = 1536
 PATH_TO_AD_PREDICTORS = _REPO_ROOT / "_artifacts/predictions_variantformer"
 TISSUE_MAP_GUID = "be73e19a"
 
