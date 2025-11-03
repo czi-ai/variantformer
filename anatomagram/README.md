@@ -62,7 +62,7 @@ from processors.vcfprocessor import VCFProcessor
 from anatomagram.components import convert_vcf_expression_predictions, AnatomagramMultiViewWidget
 
 # Run VCF2Expression predictions
-vcf_processor = VCFProcessor(model_class='D2C_PCG')
+vcf_processor = VCFProcessor(model_class='v4_pcg')
 model, checkpoint_path, trainer = vcf_processor.load_model()
 predictions_df = vcf_processor.predict(...)
 

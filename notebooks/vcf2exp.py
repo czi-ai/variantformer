@@ -190,7 +190,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(VCFProcessor, mo):
     # Initialize VCF processor for expression analysis
-    vcf_processor = VCFProcessor(model_class='D2C_PCG')
+    vcf_processor = VCFProcessor(model_class='v4_pcg')
 
     # Get available genes and tissues
     genes_df = vcf_processor.get_genes()

@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.17.0"
+__generated_with = "0.13.9"
 app = marimo.App(app_title="VCF2Risk Analysis", css_file="czi-sds-theme.css")
 
 
@@ -43,7 +43,6 @@ def _(mo):
     - Python 3.12+
     - PyTorch with CUDA support
     - DNA2Cell repository with dependencies installed
-    - AWS credentials for S3 access (AD predictor model downloads)
 
     **Input Data:**
     - VCF file with genetic variants (standard VCF v4.2+)
@@ -64,7 +63,7 @@ def _(mo):
     - **Purpose**: Captures how genetic variants affect gene regulation in each tissue
     - **Size**: 14GB checkpoint, ~1.2B parameters
 
-    **2. AD Risk Predictors** (Gradient-boosted decision trees):
+    **2. AD Risk Predictors** (Random forests for each gene-tissue pair):
     - **Input**: Gene-tissue embeddings from DNA2Cell model
     - **Output**: Alzheimer's disease risk probability (0-1 scale)
     - **Training**: Separate models for each gene-tissue pair (~16,400 genes × 45 tissues)
@@ -116,7 +115,8 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Setup
 
     This tutorial uses pre-loaded models and sample data:
@@ -127,7 +127,8 @@ def _(mo):
     The following cell initializes the model and verifies environment setup.
 
     **Expected initialization time:** ~15-20 seconds
-    """)
+    """
+    )
     return
 
 
@@ -149,7 +150,8 @@ def _(ad_risk, mo):
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Step 1: Select Gene for Analysis
 
     Choose one gene to analyze for AD risk contribution. The dropdown shows only genes
@@ -168,12 +170,13 @@ def _(mo):
     Each AD risk predictor is trained for a specific gene-tissue combination, learning
     how that gene's regulatory patterns (captured in the embedding) relate to AD pathology
     in that particular tissue context.
-    """)
+    """
+    )
     return
 
 
 @app.cell
-def _(adrisk, mo, pd):
+def _(adrisk, mo):
     # Get all available genes
     genes_df = adrisk.genes_map.reset_index()
 
@@ -209,12 +212,13 @@ def _(adrisk, mo, pd):
         mo.md(f"**{len(genes_with_ad)} genes** have AD risk predictors available"),
         gene_selector
     ])
-    return (gene_selector, genes_with_ad)
+    return gene_selector, genes_with_ad
 
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Step 2: Select Tissues for Analysis
 
     Choose which tissues to analyze for AD risk. By default, all 45 tissues with
@@ -232,7 +236,8 @@ def _(mo):
     - **System-specific**: Focus on one organ system (e.g., cardiovascular)
 
     **Note:** Processing all 45 tissues takes ~3-4 minutes. Brain-only subset (~13 tissues) completes faster (~1-2 minutes).
-    """)
+    """
+    )
     return
 
 
@@ -281,11 +286,11 @@ def _(adrisk, gene_selector, tissue_selector):
         for name in selected_tissue_names
     ]
 
-    return vcf_path, selected_gene_id, tissue_ids
+    return selected_gene_id, tissue_ids, vcf_path
 
 
 @app.cell
-def _(mo, gene_selector, tissue_selector, vcf_path):
+def _(gene_selector, mo, tissue_selector, vcf_path):
     # Display configuration summary
     gene_label = gene_selector.value if isinstance(gene_selector.value, str) else "Loading..."
 
@@ -302,7 +307,8 @@ def _(mo, gene_selector, tissue_selector, vcf_path):
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Step 3: Run AD Risk Prediction
 
     The prediction pipeline executes the following steps:
@@ -316,12 +322,13 @@ def _(mo):
     **Processing time:** ~3-4 minutes for 45 tissues on H100 GPU
 
     The prediction runs automatically when you change gene or tissue selections (reactive execution).
-    """)
+    """
+    )
     return
 
 
 @app.cell
-def _(adrisk, mo, selected_gene_id, tissue_ids, vcf_path, genes_with_ad):
+def _(adrisk, genes_with_ad, mo, selected_gene_id, tissue_ids, vcf_path):
     # Get gene name for display messaging
     gene_name = genes_with_ad[genes_with_ad['gene_id'] == selected_gene_id].iloc[0]['gene_name']
 
@@ -348,7 +355,8 @@ def _(adrisk, mo, selected_gene_id, tissue_ids, vcf_path, genes_with_ad):
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Model Outputs
 
     ### Understanding the Results
@@ -381,7 +389,8 @@ def _(mo):
       - Same gene can have different risk scores across tissues
       - Reflects tissue-specific biology and disease mechanisms
       - Brain tissues often show distinct patterns for neurological disease genes
-    """)
+    """
+    )
     return
 
 
@@ -398,7 +407,8 @@ def _(mo, predictions_df):
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Visualization 1: Risk Distribution Across Tissues
 
     This bar chart displays AD risk scores for all analyzed tissues, sorted and color-coded
@@ -411,7 +421,8 @@ def _(mo):
     - **Brain regions**: For AD genes, often show elevated risk in CNS tissues
 
     **Interactivity:** Hover over bars to see exact risk values and tissue names.
-    """)
+    """
+    )
     return
 
 
@@ -437,7 +448,8 @@ def _(mo, predictions_df):
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Visualization 2: Anatomical Risk Mapping
 
     The anatomagram displays AD risk scores spatially mapped onto human body diagrams,
@@ -460,7 +472,8 @@ def _(mo):
     - Peripheral tissues may show lower risk for CNS-focused disease genes
     - Uniform risk across tissues suggests gene-wide regulatory effects
     - Clustered risk in specific systems hints at tissue-specific mechanisms
-    """)
+    """
+    )
     return
 
 
@@ -553,7 +566,8 @@ def _(mo, predictions_df):
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Interpreting Your Results
 
     ### What do AD risk scores mean?
@@ -581,13 +595,15 @@ def _(mo):
     - Some tissues may lack sufficient AD training data
     - Scores reflect correlation, not necessarily causation
     - Model does not account for environmental factors, epigenetics, or post-transcriptional regulation
-    """)
+    """
+    )
     return
 
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Next Steps
 
     ### Analyze Your Own Data
@@ -619,13 +635,15 @@ def _(mo):
     - Save results table: `predictions_df.to_csv('ad_risk_results.csv', index=False)`
     - Export for R/Python statistical analysis
     - Share with collaborators for further investigation
-    """)
+    """
+    )
     return
 
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## References
 
     ### Anatomogram Visualizations
@@ -653,13 +671,15 @@ def _(mo):
     - [DNA2Cell GitHub Repository](https://github.com/cziscience/DNA2Cell)
     - [GTEx Portal](https://gtexportal.org/) - Population gene expression data
     - [gnomAD](https://gnomad.broadinstitute.org/) - Population variant frequencies
-    """)
+    """
+    )
     return
 
 
 @app.cell
 def _(mo):
-    mo.md("""
+    mo.md(
+        """
     ## Responsible Use
 
     **This tool is for research purposes only.**
@@ -699,7 +719,8 @@ def _(mo):
     - Direct-to-consumer genetic interpretation
     - Insurance or employment decisions
     - Medical advice or health recommendations
-    """)
+    """
+    )
     return
 
 

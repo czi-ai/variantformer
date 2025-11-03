@@ -388,7 +388,7 @@ def main():
         if not args.combine_only:
             # Initialize VCF processor
             print(f"\n📋 Loading processor and data...")
-            vcf_processor = VCFProcessor(model_class='D2C_PCG')
+            vcf_processor = VCFProcessor(model_class='v4_pcg')
             all_genes_df = vcf_processor.get_genes()
             all_tissues_list = list(vcf_processor.get_tissues())
             
@@ -457,7 +457,7 @@ def main():
         # Combine results
         print(f"\n📊 Loading data for combination...")
         if args.combine_only:
-            vcf_processor = VCFProcessor(model_class='D2C_PCG')
+            vcf_processor = VCFProcessor(model_class='v4_pcg')
             all_genes_df = vcf_processor.get_genes()
             all_tissues_list = list(vcf_processor.get_tissues())
         

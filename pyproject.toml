@@ -11,9 +11,9 @@ authors = [
 
 dependencies = [
     # Install PyTorch first
-    "torch~=2.7.0",
-    "torchaudio~=2.7.0",
-    "torchvision~=0.22.0",
+    "torch~=2.8.0",
+    "torchaudio~=2.8.0",
+    "torchvision>=0.22.0",
     # Then other dependencies
     "boto3~=1.40.49",
     "duckdb~=1.4.1",
