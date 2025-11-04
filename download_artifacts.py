@@ -5,12 +5,14 @@
 #     "boto3",
 # ]
 # ///
+import os
 import argparse
 import collections
 import dataclasses
 import hashlib
 import pathlib
 import sys
+from tqdm import tqdm
 
 import boto3
 from botocore import UNSIGNED
@@ -41,7 +43,8 @@ class AWSCredentials:
     aws_use_environment_credentials: bool = False
 
 
-DEFAULT_DESTINATION = pathlib.Path(__file__).parent.resolve() / "_artifacts"
+ARTIFACTS_DIR = "./_artifacts"
+os.makedirs(ARTIFACTS_DIR, exist_ok=True)
 DEFAULT_BUCKET="czi-variantformer"
 
 
@@ -256,7 +259,7 @@ def _download_file(client, bucket: str, key: str, local_path: pathlib.Path):
     local_path.parent.mkdir(parents=True, exist_ok=True)
 
     client.download_file(bucket, key, str(local_path))
-    log.info(f"Downloaded s3://{bucket}/{key} to {local_path}")
+    log.debug(f"Downloaded s3://{bucket}/{key} to {local_path}")
 
 
 def download(client, destination: pathlib.Path) -> list[str]:
@@ -267,7 +270,7 @@ def download(client, destination: pathlib.Path) -> list[str]:
     destination.mkdir(parents=True, exist_ok=True)
     errors = []
 
-    for artifact in ARTIFACTS:
+    for artifact in tqdm(ARTIFACTS, desc="Downloading artifacts"):
         try:
             bucket, key = _parse_s3_uri(artifact.remote_uri)
 
@@ -321,7 +324,7 @@ def _validate():
 
 
 def main(
-    destination: pathlib.Path = DEFAULT_DESTINATION,
+    destination: pathlib.Path = ARTIFACTS_DIR,
     credentials: AWSCredentials | None = None,
 ):
     try:
@@ -371,8 +374,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--destination",
         type=pathlib.Path,
-        default=DEFAULT_DESTINATION,
-        help=f"Destination directory (default: {DEFAULT_DESTINATION})",
+        default=ARTIFACTS_DIR,
+        help=f"Destination directory (default: {ARTIFACTS_DIR})",
     )
     parser.add_argument("--profile", help="AWS profile name to use")
     parser.add_argument(

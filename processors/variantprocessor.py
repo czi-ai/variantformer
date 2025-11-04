@@ -222,6 +222,20 @@ class VariantProcessor:
             fasta_path=self.fasta_path,
         )
 
+        # ################# only for debugging
+        # log.warn('Generating the dataloader with num_workers=0 for debugging')
+        # self.vep_loader_config.dataloader.num_workers = 0
+        # dataloader = DataLoader(
+        #     vep_dataset,
+        #     batch_size=1,
+        #     shuffle=False,
+        #     num_workers=self.vep_loader_config.dataloader.num_workers,
+        #     # prefetch_factor=self.vep_loader_config.dataloader.prefetch_factor,
+        #     pin_memory=self.vep_loader_config.dataloader.pin_memory,
+        #     collate_fn=collate_fn,
+        # )
+        ########################
+
         dataloader = DataLoader(
             vep_dataset,
             batch_size=1,

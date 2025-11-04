@@ -7,18 +7,23 @@ import dataclasses
 import functools
 import logging
 import os.path
-import tempfile
-
-import boto3
+import fsspec
+from filelock import FileLock
+from pathlib import Path
 import duckdb
-from botocore import UNSIGNED
-from botocore.config import Config
+
+import logging
+logging.basicConfig(
+   level=logging.DEBUG,
+   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
+   )
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
-logger = logging.getLogger(__name__)
 DEFAULT_BUCKET="czi-variantformer"
-
-
+ARTIFACTS_DIR = Path(__file__).parent.parent.resolve() / "_artifacts"
 GENE_TISSUE_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/alzheimer_disease/<model_class>/manifest.parquet"
 )
@@ -31,7 +36,6 @@ GENE_SEQUENCES_MANIFEST_FILE_PATH = (
 CRE_SEQUENCES_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/cres_seqs_manifest.parquet"
 )
-
 @dataclasses.dataclass
 class GeneRecord:
     gene_id: str
@@ -97,7 +101,7 @@ class _BaseManifestLookup:
                 f"No manifest_file_path provided and no default set for {self.__class__.__name__}"
             )
 
-        self.tmp_dir = tmp_dir or tempfile.mkdtemp()
+        # self.tmp_dir = tmp_dir or tempfile.mkdtemp()
 
         if manifest_file_path.startswith("s3://"):
             manifest_file_path_split = manifest_file_path.split("/")
@@ -108,11 +112,12 @@ class _BaseManifestLookup:
             self.manifest_file_path = manifest_file_path
         self._aws_credentials = aws_credentials or {}
 
-    @functools.cached_property
-    def s3(self):
-        # client = boto3.client("s3", **self._aws_credentials)
-        client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
-        return client
+    # @functools.cached_property
+    # def s3(self):
+    #     # client = boto3.client("s3", **self._aws_credentials)
+
+    #     client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
+    #     return client
 
     @functools.cached_property
     def con(self):
@@ -137,36 +142,53 @@ class _BaseManifestLookup:
         result = self.con.execute(
             f"SELECT DISTINCT {column_name} FROM manifest"
         ).fetchall()
-        logger.info(f"Found {len(result)} distinct values for {column_name}")
+        log.info(f"Found {len(result)} distinct values for {column_name}")
         return [row[0] for row in result]
 
     def _read_s3_file(self, s3_path: str) -> str:
-        try:
-            # Fetch the file from S3 to a local path
-            local_file_path = os.path.join(self.tmp_dir, s3_path)
-            if os.path.isfile(local_file_path):
-                # skip downloading if it's already there
-                # TODO: should this check hashes?
-                return local_file_path
-            local_dir = os.path.dirname(local_file_path)
-            os.makedirs(local_dir, exist_ok=True)
-            logger.info(f"Downloading from S3: s3://{self.bucket}/{s3_path}")
+        """Thread safe s3 downloads/caching of s3 objects
 
-            # this can be run in a multiprocessing context so we need to make sure
-            # the file either exists fully or doesn't exist fully
-            # we put it in the same dir so they're on the same filesystem
-            # so os.replace() works atomically
-            with tempfile.NamedTemporaryFile(
-                dir=local_dir, delete_on_close=False
-            ) as temp_file:
-                self.s3.download_fileobj(self.bucket, s3_path, temp_file)
-                temp_path = temp_file.name
-                os.replace(temp_path, local_file_path)  # this is an atomic operation
-            return local_file_path
+        Args:
+            s3_path (str): The S3 path to the object
 
-        except Exception as e:
-            logger.error(f"Failed to download from S3: {e}")
-            raise ValueError(f"S3 download failed: {e}")
+        Returns:
+            dst: The local path to the cached object
+        """
+
+        out_dir = ARTIFACTS_DIR
+        cache_dir = os.path.join(ARTIFACTS_DIR, 'cache')
+        os.makedirs(out_dir, exist_ok=True)
+        os.makedirs(cache_dir, exist_ok=True)
+        fsspec_storage_opts = {"s3": {"anon": True},
+                               "simplecache":
+                                   {"cache_storage": cache_dir}}
+        # normalize and namespace by bucket
+        rel = os.path.normpath(s3_path).lstrip(os.sep)
+        dst = os.path.join(out_dir, rel)
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+
+        if os.path.exists(dst):
+            log.info(f"Using cached file: {dst}")
+            return dst
+
+        lock = FileLock(dst + ".lock")
+        with lock:
+            if os.path.exists(dst):
+                return dst
+
+            # populate fsspec simplecache; returns a local *hashed* path in out_dir
+            s3_uri = f"simplecache::s3://{self.bucket}/{rel}"
+            cached = fsspec.open_local(s3_uri, **fsspec_storage_opts)
+
+            # same filesystem → zero-copy publish via hardlink
+            try:
+                os.link(cached, dst)            # atomic on same filesystem
+            except FileExistsError:
+                pass                             # someone else won the race
+            except OSError as e:
+                raise
+            return dst 
+            
 
     def _load_manifest(self):
         self.local_file_path = None
@@ -176,17 +198,17 @@ class _BaseManifestLookup:
             self.local_file_path = self.manifest_file_path
 
         if not self.local_file_path or not os.path.exists(self.local_file_path):
-            logger.error(f"Parquet file not found: {self.local_file_path}")
+            log.error(f"Parquet file not found: {self.local_file_path}")
             raise FileNotFoundError(f"Parquet file not found: {self.local_file_path}")
 
     def _load_data(self, duck_db_con):
         """Load the data from parquet file."""
         try:
-            logger.info(f"Loading parquet file: {self.local_file_path}")
+            log.info(f"Loading parquet file: {self.local_file_path}")
 
-            # Load and index the data
+            # Load and index the data - explicitly specify parquet format
             duck_db_con.execute(
-                f"CREATE TABLE manifest AS SELECT * FROM '{self.local_file_path}'"
+                f"CREATE TABLE manifest AS SELECT * FROM read_parquet('{self.local_file_path}')"
             )
 
             # Validate required columns exist
@@ -198,14 +220,14 @@ class _BaseManifestLookup:
             if missing_columns:
                 raise ValueError(f"Missing required columns: {missing_columns}")
 
-            logger.info(f"Validated schema - found columns: {column_names}")
+            log.info(f"Validated schema - found columns: {column_names}")
 
             # Create indexes for better performance
             for column in self.INDEX_COLUMNS:
                 duck_db_con.execute(f"CREATE INDEX idx_{column} ON manifest({column})")
 
         except Exception as e:
-            logger.error(f"Error loading manifest file: {e}")
+            log.error(f"Error loading manifest file: {e}")
             raise ValueError(f"Error loading manifest file: {e}")
 
     def _query(self, query_params: dict[str, int | str]) -> list:
