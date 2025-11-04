@@ -9,19 +9,26 @@ import logging
 import os.path
 import tempfile
 import fsspec
+from filelock import FileLock
+import shutil
 
 import boto3
 import duckdb
 from botocore import UNSIGNED
 from botocore.config import Config
 
-ARTIFACTS_DIR = "/tmp/variantformer_artifacts"
+import logging
+logging.basicConfig(
+   level=logging.DEBUG,
+   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
+   )
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
-logger = logging.getLogger(__name__)
 DEFAULT_BUCKET="czi-variantformer"
-
-
+ARTIFACTS_DIR = "/tmp/variantformer_artifacts"
 GENE_TISSUE_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/alzheimer_disease/<model_class>/manifest.parquet"
 )
@@ -111,12 +118,12 @@ class _BaseManifestLookup:
         self._aws_credentials = aws_credentials or {}
         self.fsspec_storage_opts = {"s3": {"anon": True}, "simplecache": {"cache_storage": ARTIFACTS_DIR}}
 
-    @functools.cached_property
-    def s3(self):
-        # client = boto3.client("s3", **self._aws_credentials)
+    # @functools.cached_property
+    # def s3(self):
+    #     # client = boto3.client("s3", **self._aws_credentials)
 
-        client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
-        return client
+    #     client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
+    #     return client
 
     @functools.cached_property
     def con(self):
@@ -141,13 +148,47 @@ class _BaseManifestLookup:
         result = self.con.execute(
             f"SELECT DISTINCT {column_name} FROM manifest"
         ).fetchall()
-        logger.info(f"Found {len(result)} distinct values for {column_name}")
+        log.info(f"Found {len(result)} distinct values for {column_name}")
         return [row[0] for row in result]
 
     def _read_s3_file(self, s3_path: str) -> str:
-        s3_uri = f"simplecache::s3://{self.bucket}/{s3_path}"
-        local_file_path = fsspec.open_local(s3_uri, **self.fsspec_storage_opts)
-        return local_file_path
+        """Thread safe s3 downloads/caching of s3 objects
+
+        Args:
+            s3_path (str): The S3 path to the object
+
+        Returns:
+            dst: The local path to the cached object
+        """
+        out_dir = self.fsspec_storage_opts["simplecache"]["cache_storage"]
+
+        # normalize and namespace by bucket
+        rel = os.path.normpath(s3_path).lstrip(os.sep)
+        dst = os.path.join(out_dir, rel)
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+
+        if os.path.exists(dst):
+            log.info(f"Using cached file: {dst}")
+            return dst
+
+        lock = FileLock(dst + ".lock")
+        with lock:
+            if os.path.exists(dst):
+                return dst
+
+            # populate fsspec simplecache; returns a local *hashed* path in out_dir
+            s3_uri = f"simplecache::s3://{self.bucket}/{rel}"
+            cached = fsspec.open_local(s3_uri, **self.fsspec_storage_opts)
+
+            # same filesystem → zero-copy publish via hardlink
+            try:
+                os.link(cached, dst)            # atomic on same filesystem
+            except FileExistsError:
+                pass                             # someone else won the race
+            except OSError as e:
+                raise
+            return dst 
+            
 
     def _load_manifest(self):
         self.local_file_path = None
@@ -157,13 +198,13 @@ class _BaseManifestLookup:
             self.local_file_path = self.manifest_file_path
 
         if not self.local_file_path or not os.path.exists(self.local_file_path):
-            logger.error(f"Parquet file not found: {self.local_file_path}")
+            log.error(f"Parquet file not found: {self.local_file_path}")
             raise FileNotFoundError(f"Parquet file not found: {self.local_file_path}")
 
     def _load_data(self, duck_db_con):
         """Load the data from parquet file."""
         try:
-            logger.info(f"Loading parquet file: {self.local_file_path}")
+            log.info(f"Loading parquet file: {self.local_file_path}")
 
             # Load and index the data - explicitly specify parquet format
             duck_db_con.execute(
@@ -179,14 +220,14 @@ class _BaseManifestLookup:
             if missing_columns:
                 raise ValueError(f"Missing required columns: {missing_columns}")
 
-            logger.info(f"Validated schema - found columns: {column_names}")
+            log.info(f"Validated schema - found columns: {column_names}")
 
             # Create indexes for better performance
             for column in self.INDEX_COLUMNS:
                 duck_db_con.execute(f"CREATE INDEX idx_{column} ON manifest({column})")
 
         except Exception as e:
-            logger.error(f"Error loading manifest file: {e}")
+            log.error(f"Error loading manifest file: {e}")
             raise ValueError(f"Error loading manifest file: {e}")
 
     def _query(self, query_params: dict[str, int | str]) -> list:
