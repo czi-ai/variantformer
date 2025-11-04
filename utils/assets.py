@@ -7,15 +7,10 @@ import dataclasses
 import functools
 import logging
 import os.path
-import tempfile
 import fsspec
 from filelock import FileLock
-import shutil
-
-import boto3
+from pathlib import Path
 import duckdb
-from botocore import UNSIGNED
-from botocore.config import Config
 
 import logging
 logging.basicConfig(
@@ -28,7 +23,7 @@ log.setLevel(logging.INFO)
 
 
 DEFAULT_BUCKET="czi-variantformer"
-ARTIFACTS_DIR = "/tmp/variantformer_artifacts"
+ARTIFACTS_DIR = Path(__file__).parent.parent.resolve() / "_artifacts"
 GENE_TISSUE_MANIFEST_FILE_PATH = (
     f"s3://{DEFAULT_BUCKET}/alzheimer_disease/<model_class>/manifest.parquet"
 )
@@ -116,7 +111,6 @@ class _BaseManifestLookup:
             self.bucket = None
             self.manifest_file_path = manifest_file_path
         self._aws_credentials = aws_credentials or {}
-        self.fsspec_storage_opts = {"s3": {"anon": True}, "simplecache": {"cache_storage": ARTIFACTS_DIR}}
 
     # @functools.cached_property
     # def s3(self):
@@ -160,8 +154,14 @@ class _BaseManifestLookup:
         Returns:
             dst: The local path to the cached object
         """
-        out_dir = self.fsspec_storage_opts["simplecache"]["cache_storage"]
 
+        out_dir = ARTIFACTS_DIR
+        cache_dir = os.path.join(ARTIFACTS_DIR, 'cache')
+        os.makedirs(out_dir, exist_ok=True)
+        os.makedirs(cache_dir, exist_ok=True)
+        fsspec_storage_opts = {"s3": {"anon": True},
+                               "simplecache":
+                                   {"cache_storage": cache_dir}}
         # normalize and namespace by bucket
         rel = os.path.normpath(s3_path).lstrip(os.sep)
         dst = os.path.join(out_dir, rel)
@@ -178,7 +178,7 @@ class _BaseManifestLookup:
 
             # populate fsspec simplecache; returns a local *hashed* path in out_dir
             s3_uri = f"simplecache::s3://{self.bucket}/{rel}"
-            cached = fsspec.open_local(s3_uri, **self.fsspec_storage_opts)
+            cached = fsspec.open_local(s3_uri, **fsspec_storage_opts)
 
             # same filesystem → zero-copy publish via hardlink
             try:
