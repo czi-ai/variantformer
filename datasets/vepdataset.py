@@ -185,7 +185,7 @@ class VEPDataset:
         # columns: chromosome	start	end	gene_id	gene_name	strand	start_cre	end_cre	cre_id	score	strand_cre	att1	att2	cre_color	cre_name	embedding	start_gene	end_gene
         gene_df["start_cre"] = gene_df["start_cre"] - self.cre_neighbour_hood
         gene_df["end_cre"] = gene_df["end_cre"] + self.cre_neighbour_hood
-        df = pd.read_pickle(cre_file)
+        df = pd.read_pickle(cre_file, compression="gzip")
         df = df.rename(columns={"start": "start_cre", "end": "end_cre"})
 
         if (
@@ -251,7 +251,6 @@ class VEPDataset:
     ) -> Tuple[pd.DataFrame, Dict]:
         """Load gene CRE and sequence data"""
         # Load cre sequence data
-        import ipdb; ipdb.set_trace()
         cre_seq_path = self.cre_seq_manifest.get_file_path(chromosome, population)
         cre_df = self._map_files(cre_seq_path, gene["gene_id"])
 
