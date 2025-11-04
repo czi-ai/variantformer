@@ -149,34 +149,6 @@ class _BaseManifestLookup:
         local_file_path = fsspec.open_local(s3_uri, **self.fsspec_storage_opts)
         return local_file_path
 
-    # def _read_s3_file(self, s3_path: str) -> str:
-    #     try:
-    #         # Fetch the file from S3 to a local path
-    #         local_file_path = os.path.join(self.tmp_dir, s3_path)
-    #         if os.path.isfile(local_file_path):
-    #             # skip downloading if it's already there
-    #             # TODO: should this check hashes?
-    #             return local_file_path
-    #         local_dir = os.path.dirname(local_file_path)
-    #         os.makedirs(local_dir, exist_ok=True)
-    #         logger.info(f"Downloading from S3: s3://{self.bucket}/{s3_path}")
-
-    #         # this can be run in a multiprocessing context so we need to make sure
-    #         # the file either exists fully or doesn't exist fully
-    #         # we put it in the same dir so they're on the same filesystem
-    #         # so os.replace() works atomically
-    #         with tempfile.NamedTemporaryFile(
-    #             dir=local_dir, delete_on_close=False
-    #         ) as temp_file:
-    #             self.s3.download_fileobj(self.bucket, s3_path, temp_file)
-    #             temp_path = temp_file.name
-    #             os.replace(temp_path, local_file_path)  # this is an atomic operation
-    #         return local_file_path
-
-    #     except Exception as e:
-    #         logger.error(f"Failed to download from S3: {e}")
-    #         raise ValueError(f"S3 download failed: {e}")
-
     def _load_manifest(self):
         self.local_file_path = None
         if self.bucket:
