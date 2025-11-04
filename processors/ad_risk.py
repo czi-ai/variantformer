@@ -28,7 +28,7 @@ class ADrisk:
             model_class (str): v4_pcg
         """
         assert model_class in [
-            # "v4_ag", # not yet available on the public bucket
+            "v4_ag", # not yet available on the public bucket
             "v4_pcg",
         ], "model_class should be either 'v4_ag' or 'v4_pcg'"
         assert type(tissue_id) is int, "tissue_id should be an integer"

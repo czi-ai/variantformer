@@ -82,6 +82,11 @@ class VCFProcessor:
             fasta_path=self.vcf_loader_config.fasta_path,
             vcf_path=vcf_path,
         )
+        # log.warn('Generating the dataloader with num_workers=0 for debugging')
+        # dataloader_config['num_workers'] = 0
+        # dataloader_config['batch_size'] = 2
+        # del dataloader_config['prefetch_factor']  # Remove prefetch_factor to avoid issues with num_workers=0
+        # import ipdb; ipdb.set_trace()
         dataloader = DataLoader(
             vcf_dataset, collate_fn=collate_fn_batching, **dataloader_config
         )  # create the dataloader

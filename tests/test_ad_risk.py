@@ -9,8 +9,7 @@ sys.path.insert(0, str(CURRENT_PATH.parent))
 from processors.vcfprocessor import VCFProcessor
 from processors import ad_risk
 
-_REPO_ROOT = Path(__file__).parent.parent.resolve()
-ARTIFACTS_DIR = _REPO_ROOT / '_artifacts'
+ARTIFACTS_DIR = "/tmp/variantformer_artifacts"
 VCF_EXAMPLE = ARTIFACTS_DIR / "HG00096.vcf.gz"
 TISSUE_MAP_PATH = ARTIFACTS_DIR / "be73e19a.pq"
 APOE_GENE_ID = 'ENSG00000130203.9'

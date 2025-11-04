@@ -15,6 +15,9 @@ dependencies = [
     "torchaudio~=2.7.0",
     "torchvision~=0.22.0",
     # Then other dependencies
+    "tqdm",
+    "fsspec",
+    "s3fs",
     "boto3~=1.40.49",
     "duckdb~=1.4.1",
     "einops~=0.8.1",
