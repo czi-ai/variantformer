@@ -129,14 +129,17 @@ example, via `-v .:/app` or `-v ./_artifacts:/app/_artifacts/`).
 
 # Notebooks
 
-##  Available Notebooks
+## 📓 Available Notebooks
 
-Jupyter notebooks:
-- `notebooks/vcf2exp.ipynb`: VCF to gene expression prediction demo
-- `notebooks/variant2exp.ipynb`: Variant to gene expression prediction demo in context to specific populations (EUR, SAS, EAS, AFR, AMR) or individual.
-- `notebooks/vcf2risk.ipynb`: VCF to Alzheimer's risk prediction demo
-- `notebooks/variant2risk.ipynb`: in silico mutation effect of Alzheimer's risk
-- `notebooks/eqtl_analysis.ipynb`: eQTL analysis comparing VariantFormer and other baseline models 
+| Notebook | Description |
+|----------|-------------|
+| [`vcf2exp.ipynb`](notebooks/vcf2exp.ipynb) | Predict tissue-specific gene expression from VCF files containing genetic variants |
+| [`variant2exp.ipynb`](notebooks/variant2exp.ipynb) | Analyze variant impact on gene expression across populations and tissues |
+| [`vcf2risk.ipynb`](notebooks/vcf2risk.ipynb) | Estimate Alzheimer's Disease risk from genetic variants in VCF files |
+| [`variant2risk.ipynb`](notebooks/variant2risk.ipynb) | Perform in silico mutagenesis to assess variant effects on AD risk |
+| [`eqtl_analysis.ipynb`](notebooks/eqtl_analysis.ipynb) | Benchmark VariantFormer against baseline models for eQTL prediction |
+
+**Note:** All expression prediction notebooks (`vcf2exp`, `variant2exp`) generate gene-specific embeddings for each gene-tissue pair that can be used for downstream tasks such as disease risk prediction, variant prioritization, or custom machine learning models. 
 
 ## Running Notebooks
 If you are not using a docker container, you may run the notebooks like your regular jupyter notebooks:
