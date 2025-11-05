@@ -316,13 +316,7 @@ def _(mo):
 
 
 @app.cell
-def _(DEFAULT_VCF_PATH, adrisk, gene_selector, tissue_selector, vcf_file_browser):
-    # Get VCF path from file browser or use default
-    if vcf_file_browser.value and len(vcf_file_browser.value) > 0:
-        vcf_path = vcf_file_browser.value[0].id  # Get selected file path
-    else:
-        vcf_path = DEFAULT_VCF_PATH  # Use default from _artifacts
-
+def _(adrisk, gene_selector, tissue_selector):
     # Get gene_id from dropdown (dropdown returns gene_id as value)
     selected_gene_id = gene_selector.value
 
@@ -333,18 +327,24 @@ def _(DEFAULT_VCF_PATH, adrisk, gene_selector, tissue_selector, vcf_file_browser
         for name in selected_tissue_names
     ]
 
-    return selected_gene_id, tissue_ids, vcf_path
+    return selected_gene_id, tissue_ids
 
 
 @app.cell
-def _(gene_selector, mo, tissue_selector, vcf_path):
+def _(DEFAULT_VCF_PATH, gene_selector, mo, tissue_selector, vcf_file_browser):
     # Display configuration summary
     gene_label = gene_selector.value if isinstance(gene_selector.value, str) else "Loading..."
+
+    # Determine VCF display name
+    if vcf_file_browser.value and len(vcf_file_browser.value) > 0:
+        _vcf_display = vcf_file_browser.value[0].id.split('/')[-1]
+    else:
+        _vcf_display = DEFAULT_VCF_PATH.split('/')[-1]
 
     mo.md(
         f"""
     **Analysis Settings:**
-    - VCF File: `{vcf_path.split('/')[-1]}`
+    - VCF File: `{_vcf_display}`
     - Selected Gene: `{gene_label.split(' | ')[0] if ' | ' in gene_label else gene_label}`
     - Tissues: {len(tissue_selector.value)} selected
     """
@@ -375,7 +375,15 @@ def _(mo):
 
 
 @app.cell
-def _(adrisk, genes_with_ad, mo, selected_gene_id, tissue_ids, vcf_path):
+def _(DEFAULT_VCF_PATH, adrisk, genes_with_ad, mo, selected_gene_id, tissue_ids, vcf_file_browser):
+    # Get VCF path from file browser or use default
+    if vcf_file_browser.value and len(vcf_file_browser.value) > 0:
+        vcf_path = vcf_file_browser.value[0].id  # Get selected file path
+        print(f"📁 Using selected VCF: {vcf_path}")
+    else:
+        vcf_path = DEFAULT_VCF_PATH  # Use default from _artifacts
+        print(f"📁 Using default VCF: {vcf_path}")
+
     # Get gene name for display messaging
     gene_name = genes_with_ad[genes_with_ad['gene_id'] == selected_gene_id].iloc[0]['gene_name']
 
