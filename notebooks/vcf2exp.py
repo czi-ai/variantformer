@@ -406,8 +406,7 @@ def _(mo):
         label="🚀 Run Expression Analysis",
         tooltip="Click to start VariantFormer predictions",
         kind='danger',
-        full_width=True,
-        value=True  # Auto-run on initial load with default selections
+        full_width=True
     )
 
     mo.vstack([
