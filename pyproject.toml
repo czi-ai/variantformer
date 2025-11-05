@@ -40,6 +40,7 @@ dependencies = [
     "tokenizers~=0.21.1",
     "torchmetrics~=1.7.1",
     "treelite>=4.4.1",
+    "ipynbname~=2025.8.0.0"
 ]
 
 [project.optional-dependencies]
