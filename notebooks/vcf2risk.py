@@ -6,6 +6,14 @@ app = marimo.App(app_title="VCF2Risk Analysis", css_file="czi-sds-theme.css")
 
 @app.cell
 def _():
+    import logging
+
+    # Suppress verbose debug logs from markdown and matplotlib
+    logging.getLogger('MARKDOWN').setLevel(logging.INFO)
+    logging.getLogger('matplotlib').setLevel(logging.INFO)
+    logging.getLogger('matplotlib.font_manager').setLevel(logging.INFO)
+    logging.getLogger('matplotlib.pyplot').setLevel(logging.INFO)
+
     import marimo as mo
     import sys
     from pathlib import Path
@@ -15,7 +23,7 @@ def _():
     from processors import ad_risk
     from anatomagram.components.anatomagram_widget import AnatomagramMultiViewWidget
     from anatomagram.components.vcf_risk_converter import EnhancedVCFRiskConverter
-    return AnatomagramMultiViewWidget, EnhancedVCFRiskConverter, ad_risk, mo
+    return AnatomagramMultiViewWidget, EnhancedVCFRiskConverter, Path, ad_risk, mo, pd
 
 
 @app.cell
@@ -42,7 +50,7 @@ def _(mo):
     **Software:**
     - Python 3.12+
     - PyTorch with CUDA support
-    - DNA2Cell repository with dependencies installed
+    - VariantFormer repository with dependencies installed
 
     **Input Data:**
     - VCF file with genetic variants (standard VCF v4.2+)
@@ -57,14 +65,14 @@ def _(mo):
 
     The pipeline combines two AI components:
 
-    **1. DNA2Cell Model** (Seq2Gene + Seq2Reg transformers):
+    **1. VariantFormer Model** (Seq2Gene + Seq2Reg transformers):
     - **Input**: DNA sequence with variants from VCF file
     - **Output**: Tissue-specific gene expression predictions + 1536-dimensional embeddings
     - **Purpose**: Captures how genetic variants affect gene regulation in each tissue
     - **Size**: 14GB checkpoint, ~1.2B parameters
 
     **2. AD Risk Predictors** (Random forests for each gene-tissue pair):
-    - **Input**: Gene-tissue embeddings from DNA2Cell model
+    - **Input**: Gene-tissue embeddings from VariantFormer model
     - **Output**: Alzheimer's disease risk probability (0-1 scale)
     - **Training**: Separate models for each gene-tissue pair (~16,400 genes × 45 tissues)
     - **Format**: Treelite `.tl` model files stored in S3
@@ -72,8 +80,8 @@ def _(mo):
     ### Pipeline Flow
 
     ```
-    VCF Variants → DNA2Cell Model → [Expression + Embedding] → AD Predictor → Risk Score
-                                      ↑ intermediate          ↑ primary output
+    VCF Variants → VariantFormer Model → [Expression + Embedding] → AD Predictor → Risk Score
+                                          ↑ intermediate             ↑ primary output
     ```
 
     ### Input Data Requirements
@@ -120,7 +128,7 @@ def _(mo):
     ## Setup
 
     This tutorial uses pre-loaded models and sample data:
-    - **DNA2Cell model**: 14GB checkpoint for expression prediction
+    - **VariantFormer model**: 14GB checkpoint for expression prediction
     - **AD risk predictors**: Downloaded from S3 as needed (gene+tissue-specific)
     - **Sample VCF**: HG00096 from 1000 Genomes Project
 
@@ -140,7 +148,7 @@ def _(mo):
 
 @app.cell
 def _(ad_risk, mo):
-    mo.md("Loading DNA2Cell AD risk prediction model...")
+    mo.md("Loading VariantFormer AD risk prediction model...")
 
     adrisk = ad_risk.ADriskFromVCF()
 
@@ -148,11 +156,47 @@ def _(ad_risk, mo):
     return (adrisk,)
 
 
+@app.cell(hide_code=True)
+def _(Path):
+    # Constants for VCF analysis
+    DEFAULT_VCF_PATH = str(Path(__file__).parent.parent / '_artifacts' / 'HG00096.vcf.gz')
+    return (DEFAULT_VCF_PATH,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md("""
+    ## Load a VCF File
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    vcf_file_browser = mo.ui.file_browser(
+        initial_path="./_artifacts/",
+        filetypes=[".vcf", ".vcf.gz", ".gz"],
+        selection_mode="file",
+        multiple=False,
+        label="Select VCF file for AD risk analysis"
+    )
+
+    mo.vstack([
+        mo.md("**VCF File Selection:**"),
+        vcf_file_browser,
+        mo.md("""
+        💡 **Browse and select VCF file.** Default location shows `HG00096.vcf.gz` sample.
+        Navigate to select different VCF files from the cluster.
+        """)
+    ])
+    return (vcf_file_browser,)
+
+
 @app.cell
 def _(mo):
     mo.md(
         """
-    ## Step 1: Select Gene for Analysis
+    ## Select Gene for Analysis
 
     Choose one gene to analyze for AD risk contribution. The dropdown shows only genes
     that have trained AD risk predictors available.
@@ -201,25 +245,56 @@ def _(adrisk, mo):
     # Find the label for the default gene
     default_label = [k for k, v in gene_options.items() if v == default_gene_id][0]
 
-    # Single-select dropdown
-    gene_selector = mo.ui.dropdown(
+    # Multi-select with max_selections=1 for searchable single gene selection
+    gene_selector = mo.ui.multiselect(
         options=gene_options,
-        value=default_label,
-        label="Select Gene for AD Risk Analysis"
+        value=[default_label],
+        label="Select Gene for AD Risk Analysis",
+        max_selections=1
     )
 
+    return gene_selector, genes_with_ad, gene_options
+
+
+@app.cell
+def _(gene_selector, genes_with_ad, mo, pd):
+    # Filter genes table based on multiselect with max_selections=1
+    # gene_selector.value is a list with 0 or 1 gene IDs
+    _selected_gene_ids = gene_selector.value
+
+    if len(_selected_gene_ids) > 0:
+        # Show only selected gene
+        _filtered_genes_df = genes_with_ad[genes_with_ad['gene_id'] == _selected_gene_ids[0]]
+    else:
+        # Show nothing when nothing selected
+        _filtered_genes_df = pd.DataFrame(columns=genes_with_ad.columns)
+
+    # Create filtered table without checkboxes
+    genes_table_filtered = mo.ui.table(
+        _filtered_genes_df,
+        selection=None,
+        show_column_summaries=False,
+        label=f"Showing {len(_filtered_genes_df)} of {len(genes_with_ad)} genes"
+    )
+    return (genes_table_filtered,)
+
+
+@app.cell
+def _(gene_selector, genes_table_filtered, mo):
+    # Display gene selection UI
     mo.vstack([
-        mo.md(f"**{len(genes_with_ad)} genes** have AD risk predictors available"),
-        gene_selector
+        mo.md("**Select a gene using dropdown** (table shows selected gene):"),
+        gene_selector,
+        genes_table_filtered
     ])
-    return gene_selector, genes_with_ad
+    return
 
 
 @app.cell
 def _(mo):
     mo.md(
         """
-    ## Step 2: Select Tissues for Analysis
+    ## Select Tissues for Analysis
 
     Choose which tissues to analyze for AD risk. By default, all 45 tissues with
     trained AD risk predictors are selected for comprehensive analysis.
@@ -242,13 +317,19 @@ def _(mo):
 
 
 @app.cell
-def _(adrisk, mo):
+def _(adrisk, mo, pd):
     # Get tissues that have AD predictors available (from manifest)
     available_tissue_ids_in_manifest = adrisk.ad_preds.get_unique('tissue_id')
 
     # Filter adrisk.tissue_map to only tissues with AD predictors
     tissues_with_ad = adrisk.tissue_map[adrisk.tissue_map.index.isin(available_tissue_ids_in_manifest)]
     ad_tissue_names = list(tissues_with_ad['tissue'])
+
+    # Create tissue dataframe for display
+    tissues_df = pd.DataFrame({
+        'tissue_name': ad_tissue_names,
+        'tissue_id': [adrisk.tissue_map[adrisk.tissue_map['tissue'] == name].index[0] for name in ad_tissue_names]
+    })
 
     # Multi-select with all AD-available tissues selected by default
     tissue_selector = mo.ui.multiselect(
@@ -257,12 +338,54 @@ def _(adrisk, mo):
         label="Select Tissues for Analysis"
     )
 
+    return tissue_selector, tissues_df, tissues_with_ad
+
+
+@app.cell
+def _(mo, pd, tissue_selector, tissues_df):
+    # Filter tissues table based on multiselect selection
+    _selected_tissue_names = tissue_selector.value
+
+    if len(_selected_tissue_names) > 0:
+        # Show only selected tissues
+        _filtered_tissues_df = tissues_df[tissues_df['tissue_name'].isin(_selected_tissue_names)]
+    else:
+        # Show nothing when nothing selected
+        _filtered_tissues_df = pd.DataFrame(columns=tissues_df.columns)
+
+    # Create filtered table without checkboxes
+    tissues_table_filtered = mo.ui.table(
+        _filtered_tissues_df,
+        selection=None,
+        show_column_summaries=False,
+        label=f"Showing {len(_filtered_tissues_df)} of {len(tissues_df)} tissues"
+    )
+    return (tissues_table_filtered,)
+
+
+@app.cell
+def _(mo, tissue_selector, tissues_table_filtered):
+    # Display tissue selection UI
     mo.vstack([
-        mo.md(f"**{len(ad_tissue_names)} tissues** have AD risk predictors available (out of 63 GTEx tissues)"),
+        mo.md("**Select tissues using dropdown** (table shows selected tissues):"),
         tissue_selector,
-        mo.md("*All tissues with AD predictors selected by default*")
+        tissues_table_filtered
     ])
-    return (tissue_selector,)
+    return
+
+
+@app.cell
+def _(gene_selector, genes_with_ad, mo, tissue_selector, tissues_df):
+    # Display selection summary
+    _gene_count = len(gene_selector.value)  # List with 0 or 1 element
+    mo.md(f"""
+    **Selection Summary**:
+    - **Gene**: {_gene_count} selected
+    - **Tissues**: {len(tissue_selector.value)} selected
+
+    💡 **Available**: {len(genes_with_ad):,} genes with AD predictors across {len(tissues_df)} tissues
+    """)
+    return
 
 
 @app.cell
@@ -273,11 +396,8 @@ def _(mo):
 
 @app.cell
 def _(adrisk, gene_selector, tissue_selector):
-    # VCF path (hardcoded sample)
-    vcf_path = '/mnt/czi-sci-ai/intrinsic-variation-gene-ex-2/project_gene_regulation/dna2cell_training/v2_pcg_flash2/sample_vcf/HG00096.vcf.gz'
-
-    # Get gene_id from dropdown (dropdown returns gene_id as value)
-    selected_gene_id = gene_selector.value
+    # Get gene_id from multiselect (returns list with 0 or 1 gene IDs)
+    selected_gene_id = gene_selector.value[0] if len(gene_selector.value) > 0 else None
 
     # Convert selected tissue names to tissue IDs
     selected_tissue_names = tissue_selector.value
@@ -286,18 +406,28 @@ def _(adrisk, gene_selector, tissue_selector):
         for name in selected_tissue_names
     ]
 
-    return selected_gene_id, tissue_ids, vcf_path
+    return selected_gene_id, tissue_ids
 
 
 @app.cell
-def _(gene_selector, mo, tissue_selector, vcf_path):
+def _(DEFAULT_VCF_PATH, gene_options, gene_selector, mo, tissue_selector, vcf_file_browser):
     # Display configuration summary
-    gene_label = gene_selector.value if isinstance(gene_selector.value, str) else "Loading..."
+    # With multiselect (max_selections=1), gene_selector.value returns a list with 0 or 1 labels
+    if len(gene_selector.value) == 0:
+        gene_label = "No gene selected"
+    else:
+        gene_label = gene_selector.value[0]  # The full label (e.g., "APOE | ENSG...")
+
+    # Determine VCF display name
+    if vcf_file_browser.value and len(vcf_file_browser.value) > 0:
+        _vcf_display = vcf_file_browser.value[0].id.split('/')[-1]
+    else:
+        _vcf_display = DEFAULT_VCF_PATH.split('/')[-1]
 
     mo.md(
         f"""
     **Analysis Settings:**
-    - VCF File: `{vcf_path.split('/')[-1]}`
+    - VCF File: `{_vcf_display}`
     - Selected Gene: `{gene_label.split(' | ')[0] if ' | ' in gene_label else gene_label}`
     - Tissues: {len(tissue_selector.value)} selected
     """
@@ -309,12 +439,12 @@ def _(gene_selector, mo, tissue_selector, vcf_path):
 def _(mo):
     mo.md(
         """
-    ## Step 3: Run AD Risk Prediction
+    ## Running AD Risk Prediction
 
     The prediction pipeline executes the following steps:
 
     1. **Load VCF variants** for the selected gene region
-    2. **Predict gene expression** across selected tissues using DNA2Cell model
+    2. **Predict gene expression** across selected tissues using VariantFormer model
     3. **Generate embeddings** (1536-dim regulatory state representations)
     4. **Download AD predictors** from S3 (one `.tl` model per tissue)
     5. **Compute AD risk scores** for each gene-tissue combination
@@ -328,7 +458,15 @@ def _(mo):
 
 
 @app.cell
-def _(adrisk, genes_with_ad, mo, selected_gene_id, tissue_ids, vcf_path):
+def _(DEFAULT_VCF_PATH, adrisk, genes_with_ad, mo, selected_gene_id, tissue_ids, vcf_file_browser):
+    # Get VCF path from file browser or use default
+    if vcf_file_browser.value and len(vcf_file_browser.value) > 0:
+        vcf_path = vcf_file_browser.value[0].id  # Get selected file path
+        print(f"📁 Using selected VCF: {vcf_path}")
+    else:
+        vcf_path = DEFAULT_VCF_PATH  # Use default from _artifacts
+        print(f"📁 Using default VCF: {vcf_path}")
+
     # Get gene name for display messaging
     gene_name = genes_with_ad[genes_with_ad['gene_id'] == selected_gene_id].iloc[0]['gene_name']
 
@@ -337,7 +475,7 @@ def _(adrisk, genes_with_ad, mo, selected_gene_id, tissue_ids, vcf_path):
     # Run AD risk prediction pipeline
     # This executes:
     #   1. VCF parsing and variant extraction
-    #   2. DNA2Cell model inference (expression + embeddings)
+    #   2. VariantFormer model inference (expression + embeddings)
     #   3. S3 download of gene+tissue-specific AD predictor models
     #   4. AD risk score computation from embeddings
     predictions_df = adrisk(vcf_path, [selected_gene_id] * len(tissue_ids), tissue_ids)
@@ -376,14 +514,13 @@ def _(mo):
     **How to interpret:**
 
     - **AD Risk Score (0-1)**:
-      - **0.0-0.3**: Low predicted contribution to AD
-      - **0.3-0.7**: Moderate predicted contribution
-      - **0.7-1.0**: High predicted contribution
+      - **0.0**: Low predicted contribution to AD
+      - **1.0**: High predicted contribution to AD
 
     - **Predicted Expression** (context):
       - Shows whether variants increase or decrease gene activity
       - Helps explain *why* risk might be high (e.g., overexpression of risk gene)
-      - Intermediate output from DNA2Cell model
+      - Intermediate output from VariantFormer model
 
     - **Tissue Specificity**:
       - Same gene can have different risk scores across tissues
@@ -409,7 +546,7 @@ def _(mo, predictions_df):
 def _(mo):
     mo.md(
         """
-    ## Visualization 1: Risk Distribution Across Tissues
+    ## Risk Distribution Across Tissues
 
     This bar chart displays AD risk scores for all analyzed tissues, sorted and color-coded
     by risk level.
@@ -440,6 +577,7 @@ def _(mo, predictions_df):
         labels={'ad_risk': 'AD Risk Score', 'tissue_name': 'Tissue'}
     )
     fig.update_xaxes(tickangle=45)
+    fig.update_yaxes(range=[0, 1])
     fig.update_layout(height=500)
 
     mo.ui.plotly(fig)
@@ -450,7 +588,7 @@ def _(mo, predictions_df):
 def _(mo):
     mo.md(
         """
-    ## Visualization 2: Anatomical Risk Mapping
+    ## Anatomical Risk Mapping
 
     The anatomagram displays AD risk scores spatially mapped onto human body diagrams,
     providing intuitive visualization of tissue-specific disease risk patterns.
@@ -644,31 +782,33 @@ def _(mo):
 def _(mo):
     mo.md(
         """
-    ## References
+    ## Acknowledgments & Citations
+
+    ### VariantFormer Model
+
+    **Citation:**
+    Ghosal, S., et al. (2025). VariantFormer: A hierarchical transformer integrating DNA sequences with genetic variation and regulatory landscapes for personalized gene expression prediction. *bioRxiv* 2025.10.31.685862. DOI: [10.1101/2025.10.31.685862](https://doi.org/10.1101/2025.10.31.685862)
+
+    **Training Data:** GTEx v8 paired whole-genome sequencing and RNA-seq data
 
     ### Anatomogram Visualizations
 
-    The anatomical diagrams used in this tutorial are derived from the **Expression Atlas**
-    project and are licensed under Creative Commons Attribution 4.0 International License.
-
     **Citation:**
-
-    Moreno P, Fexova S, George N, et al. Expression Atlas update: gene and protein expression
-    in multiple species. *Nucleic Acids Research*. 2022;50(D1):D129-D140.
-    doi:[10.1093/nar/gkab1030](https://doi.org/10.1093/nar/gkab1030)
-
-    **Source:** [Expression Atlas, EMBL-EBI](https://www.ebi.ac.uk/gxa/home)
+    Moreno, P., et al. (2022). Expression Atlas update: gene and protein expression in multiple species. *Nucleic Acids Research*. 50(D1):D129-D140. DOI: [10.1093/nar/gkab1030](https://doi.org/10.1093/nar/gkab1030)
 
     **License:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)
 
-    ### Training Data
+    **Source:** [Expression Atlas, EMBL-EBI](https://www.ebi.ac.uk/gxa/home)
 
+    ### AD Risk Predictors
+
+    **Training Data:**
     - **GTEx v8**: Tissue-specific gene expression reference data
     - **AD cohort datasets**: Case-control data for risk predictor training
 
     ### Additional Resources
 
-    - [DNA2Cell GitHub Repository](https://github.com/cziscience/DNA2Cell)
+    - [VariantFormer GitHub](https://github.com/czi-ai/variantformer)
     - [GTEx Portal](https://gtexportal.org/) - Population gene expression data
     - [gnomAD](https://gnomad.broadinstitute.org/) - Population variant frequencies
     """
