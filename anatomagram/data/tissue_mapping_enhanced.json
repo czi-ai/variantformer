@@ -471,9 +471,9 @@
     "62": {
       "tissue_name": "whole blood",
       "tissue_type": "tissue",
-      "uberon_id": "UBERON_0001638",
+      "uberon_id": "UBERON_0000178",
       "display_name": "Whole Blood",
-      "svg_uberon_id": "UBERON_0001638",
+      "svg_uberon_id": "UBERON_0000178",
       "is_direct_match": true,
       "can_visualize": true
     },
