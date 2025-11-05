@@ -8,7 +8,7 @@
 
 import marimo
 
-__generated_with = "0.17.6"
+__generated_with = "0.17.7"
 app = marimo.App(
     app_title="VCF2Expression with Anatomagram",
     css_file="czi-sds-theme.css",
@@ -120,7 +120,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _():
     # Constants for VCF analysis
-    DEFAULT_VCF_PATH = '/mnt/czi-sci-ai/intrinsic-variation-gene-ex-2/project_gene_regulation/dna2cell_training/v2_pcg_flash2/sample_vcf/HG00096.vcf.gz'
+    DEFAULT_VCF_PATH = str(Path(__file__).parent.parent / '_artifacts' / 'HG00096.vcf.gz')
     return (DEFAULT_VCF_PATH,)
 
 
@@ -135,7 +135,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     vcf_file_browser = mo.ui.file_browser(
-        initial_path="./_artifacts",
+        initial_path="./_artifacts/",
         filetypes=[".vcf", ".vcf.gz", ".gz"],
         selection_mode="file",
         multiple=False,
