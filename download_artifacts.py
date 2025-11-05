@@ -90,6 +90,14 @@ ARTIFACTS = [
         local_path="f9bbc0ba.pq",
     ),
     Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/gold_data/a0063c48.pq",
+        local_path="a0063c48.pq",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/gold_data/9a83db58.pq",
+        local_path="9a83db58.pq",
+    ),
+    Artifact(
         remote_uri=f"s3://{DEFAULT_BUCKET}/gold_data/924979a7.pq",
         local_path="924979a7.pq",
     ),
@@ -100,6 +108,10 @@ ARTIFACTS = [
     Artifact(
         remote_uri=f"s3://{DEFAULT_BUCKET}/gold_data/be73e19a.pq",
         local_path="be73e19a.pq",
+    ),
+    Artifact(
+        remote_uri=f"s3://{DEFAULT_BUCKET}/gold_data/b23c9b69.pq",
+        local_path="b23c9b69.pq",
     ),
     Artifact(
         remote_uri=f"s3://{DEFAULT_BUCKET}/model/common/reference_genomes/data_split/hg38/cres/data_split/hg38_chr19.pkl.gz",

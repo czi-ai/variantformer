@@ -50,10 +50,10 @@ rm -rf bcftools-1.21 bcftools-1.21.tar.bz2
 # Install uv to manage Python installation
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
+# setup python virtual environment
 export UV_PROJECT_ENVIRONMENT=.venv
 uv venv $UV_PROJECT_ENVIRONMENT --python=3.12
-
 source $UV_PROJECT_ENVIRONMENT/bin/activate
 
-uv pip install torch psutil
-uv pip install -e .[notebook,test] --no-build-isolation
+# install all dependencies
+uv pip install -e .[notebook,test,marimo]

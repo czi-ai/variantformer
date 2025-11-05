@@ -14,7 +14,7 @@ import duckdb
 
 import logging
 logging.basicConfig(
-   level=logging.DEBUG,
+   level=logging.INFO,
    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
    datefmt='%Y-%m-%d %H:%M:%S'
    )
@@ -61,6 +61,59 @@ class GeneTissueRecord:
     file_path: str
 
 
+class S3CachedFetcher:
+    def __init__(self, bucket: str = DEFAULT_BUCKET, 
+                 tmp_dir: str = ARTIFACTS_DIR, 
+                 aws_credentials: dict = None):
+        self.bucket = bucket
+        self.tmp_dir = tmp_dir
+        os.makedirs(self.tmp_dir, exist_ok=True)
+        self._aws_credentials = aws_credentials or {}
+
+    def get(self, s3_path: str) -> str:
+        """Thread safe s3 downloads/caching of s3 objects
+
+        Args:
+            s3_path (str): The S3 path to the object
+
+        Returns:
+            dst: The local path to the cached object
+        """
+
+        cache_dir = os.path.join(self.tmp_dir, 'cache')
+        os.makedirs(cache_dir, exist_ok=True)
+        fsspec_storage_opts = {"s3": {"anon": True},
+                               "simplecache": {"cache_storage": cache_dir}}
+        # normalize and namespace by bucket
+        rel = os.path.normpath(s3_path).lstrip(os.sep)
+        dst = os.path.realpath(os.path.join(self.tmp_dir, rel))
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+
+        if os.path.exists(dst):
+            log.debug(f"Using cached file: {dst}")
+            return dst
+        
+        lock_path = dst + '.lock'
+        # Use FileLock context manager which handles lock acquisition/release
+        with FileLock(lock_path, timeout=600):  # 10 minute timeout
+            # Double-check after acquiring lock (another process may have downloaded it)
+            if os.path.exists(dst):
+                return dst
+
+            # populate fsspec simplecache; returns a local hashed path in out_dir
+            s3_uri = f"simplecache::s3://{self.bucket}/{rel}"
+            cached = fsspec.open_local(s3_uri, **fsspec_storage_opts)
+
+            # same filesystem → zero-copy publish via hardlink
+            try:
+                os.link(cached, dst)            # atomic on same filesystem
+            except FileExistsError:
+                pass                             # someone else won the race
+            except OSError as e:
+                raise
+            
+            return dst 
+
 # TODO: this can be simplified using pandas on parquet files directly
 class _BaseManifestLookup:
     """
@@ -77,7 +130,7 @@ class _BaseManifestLookup:
     def __init__(
         self,
         manifest_file_path: str = None,
-        tmp_dir: str = None,
+        tmp_dir: str = ARTIFACTS_DIR,
         aws_credentials: dict = None,
         model_class: str = None,
     ):
@@ -110,14 +163,11 @@ class _BaseManifestLookup:
         else:
             self.bucket = None
             self.manifest_file_path = manifest_file_path
-        self._aws_credentials = aws_credentials or {}
-
-    # @functools.cached_property
-    # def s3(self):
-    #     # client = boto3.client("s3", **self._aws_credentials)
-
-    #     client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
-    #     return client
+        self.s3_fetcher = S3CachedFetcher(
+            bucket=self.bucket or DEFAULT_BUCKET,
+            tmp_dir=tmp_dir,
+            aws_credentials=aws_credentials,
+        )
 
     @functools.cached_property
     def con(self):
@@ -146,53 +196,14 @@ class _BaseManifestLookup:
         return [row[0] for row in result]
 
     def _read_s3_file(self, s3_path: str) -> str:
-        """Thread safe s3 downloads/caching of s3 objects
+        """Read a file from S3, caching it locally.
 
         Args:
             s3_path (str): The S3 path to the object
-
         Returns:
-            dst: The local path to the cached object
+            str: The local path to the cached object
         """
-
-        out_dir = ARTIFACTS_DIR
-        cache_dir = os.path.join(ARTIFACTS_DIR, 'cache')
-        os.makedirs(out_dir, exist_ok=True)
-        os.makedirs(cache_dir, exist_ok=True)
-        fsspec_storage_opts = {"s3": {"anon": True},
-                               "simplecache":
-                                   {"cache_storage": cache_dir}}
-        # normalize and namespace by bucket
-        rel = os.path.normpath(s3_path).lstrip(os.sep)
-        dst = os.path.join(out_dir, rel)
-        os.makedirs(os.path.dirname(dst), exist_ok=True)
-
-        if os.path.exists(dst):
-            log.info(f"Using cached file: {dst}")
-            return dst
-
-        with FileLock(dst + ".lock"):
-            if os.path.exists(dst):
-                return dst
-
-            # populate fsspec simplecache; returns a local *hashed* path in out_dir
-            s3_uri = f"simplecache::s3://{self.bucket}/{rel}"
-            try:
-                cached = fsspec.open_local(s3_uri, **fsspec_storage_opts)
-            except Exception as e:
-                log.error(f"Failed to download from S3: {s3_uri}, error: {e}")
-                raise
-
-            # same filesystem → zero-copy publish via hardlink
-            try:
-                os.link(cached, dst)            # atomic on same filesystem
-            except FileExistsError:
-                pass                             # someone else won the race
-            except OSError as e:
-                log.error(f"Failed to create hardlink from {cached} to {dst}: {e}")
-                raise
-            return dst 
-            
+        return self.s3_fetcher.get(s3_path)
 
     def _load_manifest(self):
         self.local_file_path = None

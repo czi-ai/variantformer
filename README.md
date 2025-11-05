@@ -1,3 +1,4 @@
+
 # VariantFormer
 ![Model Overview](figs/model_overview.png)
 
@@ -7,7 +8,7 @@
 VariantFormer is a 1.2-billion-parameter hierarchical transformer model that predicts tissue-specific gene expression from personalized diploid genomes. Unlike traditional reference-based models, VariantFormer directly incorporates individual genetic variants to generate tissue-conditioned, person-specific expression predictions across the genome.
 
 ## Citation
-VariantFormer: A hierarchical transformer integrating DNA sequences with genetic variations and regulatory landscapes for personalized gene expression prediction. Sayan Ghosal, Youssef Barhomi, Tejaswini Ganapathi, Amy Krystosik, Lakshmi Krishnan,Sashidhar Guntury, Donghui Li, Alzheimer’s Disease Neuroimaging Initiative, Francesco Paolo Casalec and Theofanis Karaletsos. 2025 bioRxiv. DOI: https://doi.org/10.1101/2025.10.31.685862
+VariantFormer: A hierarchical transformer integrating DNA sequences with genetic variations and regulatory landscapes for personalized gene expression prediction. Sayan Ghosal, Youssef Barhomi, Tejaswini Ganapathi, Amy Krystosik, Lakshmi Krishnan,Sashidhar Guntury, Donghui Li, Alzheimer’s Disease Neuroimaging Initiative, Francesco Paolo Casale and Theofanis Karaletsos. 2025 bioRxiv. DOI: https://doi.org/10.1101/2025.10.31.685862
 
 ## Key Features
 
@@ -39,32 +40,78 @@ This represents the largest curated collection of paired whole-genome sequencing
 
 # Setup
 
-## Downloading Artifacts
+## Requirements
 
-Before running VariantFormer, you will need to download the model
-checkpoints and other artifacts. The `download_artifacts.py` script handles
-downloading these. No special credentials are needed to download them.
+This is the hardware this model has been tested on:
+- GPU: H100 or L40 gpu (this code has been tested on only these 2, other gpus may work)
+- Cuda: 12
+- OS: Ubuntu 24.04
 
-This script has a dependency on `boto3`. You will either need to `pip install boto3`,
-possibly into a virtual environment, or use a tool like [uv](https://docs.astral.sh/uv/)
-that understands PEP723 inline metadata.
 
-To download artifacts:
+## Quickstart 
+### Step 1: get the source and install dependencies
+This step takes less than 5min
 
 ```sh
-python download_artifacts.py
-# or
-uv run download_artifacts.py
-# or
-make download
+# get this package's source code, use gh (https://cli.github.com/) for convenience
+gh repo clone czi-ai/variantformer
+cd variantformer
+./install.sh
+source .venv/bin/activate
 ```
 
+### Step 2: install flash attention
 
-## Docker Option
+```sh
+uv pip install https://github.com/Dao-AILab/flash-attention/releases/download/v2.8.3/flash_attn-2.8.3+cu12torch2.8cxx11abiTRUE-cp312-cp312-linux_x86_64.whl
+```
+
+Note: the flash attention above works with torch 2.8, cuda 12, python 3.12 and ABI=True. If you have other dependency constraints, you may find the corresponding flash attention wheel [here](https://github.com/Dao-AILab/flash-attention/releases/tag/v2.8.3). You can also install flash attention from scratch while following instructions [here](https://github.com/Dao-AILab/flash-attention)
+
+### Step 3: fetch data assets
+The model uses many data artifacts, like model checkpoints, gene and cre coordinates, example whole genome sequences representing different ancestries. All artifacts get downloaded into the `./_artifacts` directory in the package's root. No special credentials are needed to download all artifacts. This should take less than 5min on a 1Gb connection. It is about 43GB of data. 
+
+```sh
+./download_artifacts.py
+```
+
+### Step 4: run the model
+To get started, you may run your first jupyter [notebook](https://github.com/czi-ai/variantformer/blob/main/notebooks/vcf2exp.ipynb)
+```sh
+source .venv/bin/activate
+jupyter ./notebooks/vcf2exp.ipynb
+```
+for more details, see the section below about notebooks.
+
+
+Note: if you want to install this package using a docker container, please see the next section
+
+
+### (Optional) Step 5: run the unit tests 
+```
+pytest 
+```
+
+## Troubleshooting
+### flash attention undefined symbol
+```
+ImportError .venv/lib/python3.12/site-packages/flash_attn_2_cuda.cpython-312-x86_64-linux-gnu.so: undefined symbol: _ZN3c104cuda9SetDeviceEab
+``` 
+If you have installed flash_attn from the wheel above which works with torch=2.8 and you may have a different torch version. Ensure you install the version in the flash attention wheel that maps to your torch version. The more robust way of dealing with this dependency issue is to install flash attention from scratch with `uv pip install flash_attn` but it may take a long time (hours) to install. 
+
+Cause: This error indicates a version mismatch between the installed FlashAttention and PyTorch binaries.
+
+Resolution: Ensure that the FlashAttention wheel version exactly matches your installed PyTorch and CUDA versions.
+Alternatively, build FlashAttention from source for maximum compatibility:
+```uv pip install flash_attn```
+(Note: building from source can take an hour or more, depending on system resources.)
+
+
+## Installing package with Docker
 
 A `Dockerfile` is provided in this repo. It is used to create a self-contained
 "container" with all dependencies for VariantFormer installed. You will need
-[Docker](https://www.docker.com/) or a compatrible tool like [Podman](https://podman.io/)
+[Docker](https://www.docker.com/) or a compatible tool like [Podman](https://podman.io/)
  set up on your system.
 
 To build the container:
@@ -80,72 +127,33 @@ into the container. They must be mounted as a volume when running the container 
 example, via `-v .:/app` or `-v ./_artifacts:/app/_artifacts/`).
 
 
-## Direct Install Option
-
-Alternatively, VariantFormer can be installed directly onto your system. This
-is difficult to automate due to dependencies between VariantFormer, PyTorch,
-Flash-Attention, and CUDA.
-
-The `install_local.sh` script will attempt to install all necessary dependencies,
-and has been tested on Ubuntu 24.04, but you may need to modify it for your
-environment.
-
-
-### Note on Flash Attention
-
-VariantFormer uses [flash-attention](https://github.com/Dao-AILab/flash-attention).
-Wheels for this are not available on PyPI, so you will either need to manually
-obtain one from their [Github release](https://github.com/Dao-AILab/flash-attention/releases/tag/v2.7.4.post1),
-or compile from source.
-
-This dependency may require special handling to install since PyTorch is used
-when parsing its `setup.py` file.
-
-If you are using a recent version of `uv` that supports [extra-build-dependencies](https://docs.astral.sh/uv/reference/settings/#extra-build-dependencies),
-then it should handle everything in a single step:
-
-```sh
-uv pip install -e ".[notebook]"
-```
-
-If you are using an older version of `uv`, you will need to first install PyTorch,
-then install VariantFormer (and with it flash-attention) with [build isolation](https://docs.astral.sh/uv/concepts/projects/config/#disabling-build-isolation)
-turned off:
-
-```sh
-uv pip install torch
-uv pip install -e ".[notebook]" --no-build-isolation
-```
-
-If you are using vanilla `pip`, you will also need to install PyTorch first:
-
-```sh
-pip install torch psutil
-pip install -e ".[notebook]" --no-build-isolaton
-```
-
-
 # Notebooks
 
-##  Available Notebooks
+## 📓 Available Notebooks
 
-- `notebooks/vcf2exp.ipynb`: VCF to gene expression prediction demo
-- `notebooks/variant2exp.ipynb`: Variant to gene expression prediction demo in context to specific populations (EUR, SAS, EAS, AFR, AMR) or individual.
-- `notebooks/vcf2risk.ipynb`: VCF to Alzheimer's risk prediction demo
+| Notebook | Description |
+|----------|-------------|
+| [`vcf2exp.ipynb`](notebooks/vcf2exp.ipynb) | Predict tissue-specific gene expression from VCF files containing genetic variants |
+| [`variant2exp.ipynb`](notebooks/variant2exp.ipynb) | Analyze variant impact on gene expression across populations and tissues |
+| [`vcf2risk.ipynb`](notebooks/vcf2risk.ipynb) | Estimate Alzheimer's Disease risk from genetic variants in VCF files |
+| [`variant2risk.ipynb`](notebooks/variant2risk.ipynb) | Perform in silico mutagenesis to assess variant effects on AD risk |
+| [`eqtl_analysis.ipynb`](notebooks/eqtl_analysis.ipynb) | Benchmark VariantFormer against baseline models for eQTL prediction |
 
+**Note:** All expression prediction notebooks (`vcf2exp`, `variant2exp`) generate gene-specific embeddings for each gene-tissue pair that can be used for downstream tasks such as disease risk prediction, variant prioritization, or custom machine learning models. 
 
 ## Running Notebooks
+If you are not using a docker container, you may run the notebooks like your regular jupyter notebooks:
+```sh
+jupyter notebooks/<NOTEBOOK_FILE>
+```
 
-The Docker container option is the most straightforward way to run
-the example notebooks.
-
-To launch a containerized Jupyter notebook instance:
+If you are using docker, launch a containerized Jupyter notebook instance:
 
 ```sh
 make notebook
 ```
 
-One the notebook server is running, it will print a URL out to the console.
+Once the notebook server is running, it will print a URL out to the console.
 This can be opened in a web browser to access the notebooks.
 
 If you are running the notebook on a remote server, you may need to allow access

@@ -1,7 +1,6 @@
 import os
 import time
 import torch
-import mlflow
 from omegaconf import OmegaConf
 from typing import Tuple, Optional
 from seq2gene.model import Seq2GenePredictor
@@ -26,11 +25,8 @@ class ModelManager:
         self.config = config
         self.model = None
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self._setup_mlflow()
 
-    def _setup_mlflow(self):
-        """Setup MLflow tracking"""
-        mlflow.set_tracking_uri("http://mlflow-api.mlflow.svc.cluster.local:5000")
+
 
     def _download_with_retry(self, download_func, timeout: int = 600) -> bool:
         """Helper function to download with retry logic"""
@@ -62,38 +58,6 @@ class ModelManager:
         seq2reg_gene = Seq2RegPredictor(**chk["hyper_parameters"])
         seq2reg_gene.load_state_dict(chk["state_dict"])
         return seq2reg_gene
-
-    def _download_seq2gene_checkpoint(self, run_id: str, output_path: str) -> str:
-        """Download Seq2Gene checkpoint"""
-        # Get latest checkpoint
-        epoch_paths = mlflow.artifacts.list_artifacts(
-            run_id=run_id, artifact_path="checkpoints"
-        )
-        epoch_paths.sort(key=lambda x: int(x.path.split("_")[-1]))
-        latest_epoch = epoch_paths[-1].path
-
-        log.info(f"Downloading checkpoint from {latest_epoch}")
-        artifact_path = f"{latest_epoch}/checkpoint.pth"
-
-        def download():
-            return mlflow.artifacts.download_artifacts(
-                run_id=run_id,
-                artifact_path=artifact_path,
-                dst_path=f"{output_path}/ckpts",
-            )
-
-        checkpoint_path = None
-        success = self._download_with_retry(
-            lambda: setattr(self, "_temp_checkpoint_path", download())
-        )
-        if success:
-            checkpoint_path = self._temp_checkpoint_path
-            delattr(self, "_temp_checkpoint_path")
-
-        if checkpoint_path is None:
-            raise RuntimeError("Failed to download Seq2Gene checkpoint")
-
-        return checkpoint_path
 
     def load_model(self) -> Tuple[Seq2GenePredictor, str]:
         """Load the complete Seq2Gene model"""
