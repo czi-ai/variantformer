@@ -129,15 +129,32 @@ pip install -e ".[notebook]" --no-build-isolaton
 
 ##  Available Notebooks
 
+### Marimo Notebooks (Interactive)
+- `notebooks/vcf2exp.py`: Expression prediction with interactive anatomogram visualization
+- `notebooks/vcf2risk.py`: AD risk prediction with tissue-specific risk mapping
+
+**See [notebooks/README.md](notebooks/README.md) for Marimo setup and usage instructions.**
+
+### Jupyter Notebooks
 - `notebooks/vcf2exp.ipynb`: VCF to gene expression prediction demo
-- `notebooks/variant2exp.ipynb`: Variant to gene expression prediction demo in context to specific populations (EUR, SAS, EAS, AFR, AMR) or individual.
+- `notebooks/variant2exp.ipynb`: Variant to gene expression prediction demo in context to specific populations (EUR, SAS, EAS, AFR, AMR) or individual
 - `notebooks/vcf2risk.ipynb`: VCF to Alzheimer's risk prediction demo
 
 
 ## Running Notebooks
 
-The Docker container option is the most straightforward way to run
-the example notebooks.
+### Marimo (Recommended for Interactive Analysis)
+Marimo notebooks provide reactive execution, searchable gene selection, and modern UI components.
+
+```sh
+source .venv/bin/activate
+marimo edit notebooks/vcf2exp.py
+```
+
+See [notebooks/README.md](notebooks/README.md) for detailed Marimo instructions.
+
+### Jupyter (Docker)
+The Docker container option is the most straightforward way to run Jupyter notebooks.
 
 To launch a containerized Jupyter notebook instance:
 
@@ -145,7 +162,7 @@ To launch a containerized Jupyter notebook instance:
 make notebook
 ```
 
-One the notebook server is running, it will print a URL out to the console.
+Once the notebook server is running, it will print a URL out to the console.
 This can be opened in a web browser to access the notebooks.
 
 If you are running the notebook on a remote server, you may need to allow access
