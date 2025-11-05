@@ -392,30 +392,6 @@ def _(mo, selected_tissues, tissues_table_filtered):
     return
 
 
-@app.cell
-def _(mo):
-    # Info callout and run button in vstack layout
-    info_callout = mo.md("""
-    **Ready to analyze?**
-    - Select a gene and tissues above
-    - Click the button to run VariantFormer predictions
-    - **Timing**: ~30 seconds for one gene across 63 tissues (H100 GPU)
-    """).callout(kind="info")
-
-    run_analysis_button = mo.ui.run_button(
-        label="🚀 Run Expression Analysis",
-        tooltip="Click to start VariantFormer predictions",
-        kind='danger',
-        full_width=True
-    )
-
-    mo.vstack([
-        info_callout,
-        run_analysis_button
-    ])
-    return (run_analysis_button,)
-
-
 @app.cell(hide_code=True)
 def _(
     DEFAULT_VCF_PATH,
@@ -497,22 +473,13 @@ def _(
     DEFAULT_VCF_PATH,
     gene_id_to_label,
     pd,
-    run_analysis_button,
     selected_genes,
     selected_tissues,
     vcf_file_browser,
     vcf_processor,
 ):
-    # Gate execution behind run button
-    if not run_analysis_button.value:
-        print("⏸️  Ready to run analysis")
-        print("   Select a gene and tissues above, then click 'Run Expression Analysis'")
-        expression_predictions = None
-        query_df = None
-        all_gene_ids = []
-        vcf_path = None
-        gene_id = None
-    elif len(selected_genes.value) == 0:
+    # Analysis runs automatically when selections change
+    if len(selected_genes.value) == 0:
         print("⚠️  No gene selected. Please select a gene.")
         expression_predictions = None
         query_df = None
