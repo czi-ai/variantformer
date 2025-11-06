@@ -31,5 +31,8 @@ ENV/
 env/
 .ipynb_checkpoints/
 
+# marimo session cache
+notebooks/__marimo__/
+
 # model artifacts like weights that are large and need to be downloaded
 _artifacts/

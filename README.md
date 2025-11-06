@@ -131,6 +131,8 @@ example, via `-v .:/app` or `-v ./_artifacts:/app/_artifacts/`).
 
 ## 📓 Available Notebooks
 
+
+=======
 | Notebook | Description |
 |----------|-------------|
 | [`vcf2exp.ipynb`](notebooks/vcf2exp.ipynb) | Predict tissue-specific gene expression from VCF files containing genetic variants |
@@ -138,6 +140,10 @@ example, via `-v .:/app` or `-v ./_artifacts:/app/_artifacts/`).
 | [`vcf2risk.ipynb`](notebooks/vcf2risk.ipynb) | Estimate Alzheimer's Disease risk from genetic variants in VCF files |
 | [`variant2risk.ipynb`](notebooks/variant2risk.ipynb) | Perform in silico mutagenesis to assess variant effects on AD risk |
 | [`eqtl_analysis.ipynb`](notebooks/eqtl_analysis.ipynb) | Benchmark VariantFormer against baseline models for eQTL prediction |
+| [`vcf2exp.py`](notebooks/vcf2exp.py) | (Marimo Interactive) Expression prediction with interactive anatomogram visualization |
+| [`vcf2risk.py`](notebooks/vcf2risk.py) | (Marimo Interactive) AD risk prediction with tissue-specific risk mapping |
+
+**See [notebooks/README.md](notebooks/README.md) for Marimo setup and usage instructions.**
 
 **Note:** All expression prediction notebooks (`vcf2exp`, `variant2exp`) generate gene-specific embeddings for each gene-tissue pair that can be used for downstream tasks such as disease risk prediction, variant prioritization, or custom machine learning models. 
 
@@ -146,6 +152,19 @@ If you are not using a docker container, you may run the notebooks like your reg
 ```sh
 jupyter notebooks/<NOTEBOOK_FILE>
 ```
+
+### Marimo (Recommended for Interactive Analysis)
+Marimo notebooks provide reactive execution, searchable gene selection, and modern UI components.
+
+```sh
+source .venv/bin/activate
+marimo edit notebooks/vcf2exp.py
+```
+
+See [notebooks/README.md](notebooks/README.md) for detailed Marimo instructions.
+
+### Jupyter (Docker)
+The Docker container option is the most straightforward way to run Jupyter notebooks.
 
 If you are using docker, launch a containerized Jupyter notebook instance:
 

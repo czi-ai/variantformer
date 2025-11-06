@@ -1,0 +1,1017 @@
+{
+  "tissue_mappings": {
+    "7": {
+      "tissue_name": "adipose - subcutaneous",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002190",
+      "display_name": "Subcutaneous Adipose Tissue",
+      "svg_uberon_id": "UBERON_0001013",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "8": {
+      "tissue_name": "adipose - visceral (omentum)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0010414",
+      "display_name": "omental fat pad",
+      "svg_uberon_id": "UBERON_0001013",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "9": {
+      "tissue_name": "adrenal gland",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002369",
+      "display_name": "Adrenal Gland",
+      "svg_uberon_id": "UBERON_0002369",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "10": {
+      "tissue_name": "artery - aorta",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000947",
+      "display_name": "Aorta",
+      "svg_uberon_id": "UBERON_0000947",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "11": {
+      "tissue_name": "artery - coronary",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001621",
+      "display_name": "Coronary Artery",
+      "svg_uberon_id": "UBERON_0001621",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "12": {
+      "tissue_name": "artery - tibial",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0007610",
+      "display_name": "Tibial Artery",
+      "svg_uberon_id": "UBERON_0001637",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "13": {
+      "tissue_name": "bladder",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001255",
+      "display_name": "Bladder",
+      "svg_uberon_id": "UBERON_0001255",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "14": {
+      "tissue_name": "blood",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000178",
+      "display_name": "Blood",
+      "svg_uberon_id": "UBERON_0000178",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "15": {
+      "tissue_name": "brain - amygdala",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001876",
+      "display_name": "Amygdala",
+      "svg_uberon_id": "UBERON_0001876",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "16": {
+      "tissue_name": "brain - anterior cingulate cortex (ba24)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0009835",
+      "display_name": "Anterior Cingulate Cortex",
+      "svg_uberon_id": "UBERON_0000956",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "17": {
+      "tissue_name": "brain - caudate (basal ganglia)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001873",
+      "display_name": "Caudate Nucleus",
+      "svg_uberon_id": "UBERON_0001873",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "18": {
+      "tissue_name": "brain - cerebellar hemisphere",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002245",
+      "display_name": "Cerebellar Hemisphere",
+      "svg_uberon_id": "UBERON_0002245",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "19": {
+      "tissue_name": "brain - cerebellum",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002037",
+      "display_name": "Cerebellum",
+      "svg_uberon_id": "UBERON_0002037",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "20": {
+      "tissue_name": "brain - cortex",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000956",
+      "display_name": "Cerebral Cortex",
+      "svg_uberon_id": "UBERON_0000956",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "21": {
+      "tissue_name": "brain - frontal cortex (ba9)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0013540",
+      "display_name": "Frontal Cortex",
+      "svg_uberon_id": "UBERON_0001870",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "22": {
+      "tissue_name": "brain - hippocampus",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002421",
+      "display_name": "Hippocampus",
+      "svg_uberon_id": "UBERON_0002421",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "23": {
+      "tissue_name": "brain - hypothalamus",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001898",
+      "display_name": "Hypothalamus",
+      "svg_uberon_id": "UBERON_0001898",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "24": {
+      "tissue_name": "brain - nucleus accumbens (basal ganglia)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001882",
+      "display_name": "Nucleus Accumbens",
+      "svg_uberon_id": "UBERON_0001882",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "25": {
+      "tissue_name": "brain - putamen (basal ganglia)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001874",
+      "display_name": "Putamen",
+      "svg_uberon_id": "UBERON_0001874",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "26": {
+      "tissue_name": "brain - spinal cord (cervical c-1)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002726",
+      "display_name": "Spinal Cord",
+      "svg_uberon_id": "UBERON_0002240",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "27": {
+      "tissue_name": "brain - substantia nigra",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002038",
+      "display_name": "Substantia Nigra",
+      "svg_uberon_id": "UBERON_0002038",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "28": {
+      "tissue_name": "breast - mammary tissue",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000310",
+      "display_name": "Mammary Tissue",
+      "svg_uberon_id": "UBERON_0000310",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "31": {
+      "tissue_name": "cervix - ectocervix",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0012249",
+      "display_name": "Ectocervix",
+      "svg_uberon_id": "UBERON_0012249",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "32": {
+      "tissue_name": "cervix - endocervix",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000458",
+      "display_name": "Endocervix",
+      "svg_uberon_id": "UBERON_0000002",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "33": {
+      "tissue_name": "colon - sigmoid",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001159",
+      "display_name": "Sigmoid Colon",
+      "svg_uberon_id": "UBERON_0001155",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "34": {
+      "tissue_name": "colon - transverse",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001157",
+      "display_name": "Transverse Colon",
+      "svg_uberon_id": "UBERON_0001155",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "35": {
+      "tissue_name": "esophagus - gastroesophageal junction",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0007650",
+      "display_name": "Gastroesophageal Junction",
+      "svg_uberon_id": "UBERON_0007650",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "36": {
+      "tissue_name": "esophagus - mucosa",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002469",
+      "display_name": "Esophageal Mucosa",
+      "svg_uberon_id": "UBERON_0001043",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "37": {
+      "tissue_name": "esophagus - muscularis",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0004648",
+      "display_name": "Esophageal Muscularis",
+      "svg_uberon_id": "UBERON_0001043",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "38": {
+      "tissue_name": "fallopian tube",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0003889",
+      "display_name": "Fallopian Tube",
+      "svg_uberon_id": "UBERON_0003889",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "39": {
+      "tissue_name": "heart - atrial appendage",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0006618",
+      "display_name": "Atrium auricular region",
+      "svg_uberon_id": "UBERON_0006618",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "40": {
+      "tissue_name": "heart - left ventricle",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002084",
+      "display_name": "Left Ventricle",
+      "svg_uberon_id": "UBERON_0002084",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "41": {
+      "tissue_name": "kidney - cortex",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001225",
+      "display_name": "Kidney Cortex",
+      "svg_uberon_id": "UBERON_0001225",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "42": {
+      "tissue_name": "kidney - medulla",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000362",
+      "display_name": "Kidney Medulla",
+      "svg_uberon_id": "UBERON_0002113",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "43": {
+      "tissue_name": "liver",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002107",
+      "display_name": "Liver",
+      "svg_uberon_id": "UBERON_0002107",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "44": {
+      "tissue_name": "lung",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002048",
+      "display_name": "Lung",
+      "svg_uberon_id": "UBERON_0002048",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "46": {
+      "tissue_name": "minor salivary gland",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001830",
+      "display_name": "Minor Salivary Gland",
+      "svg_uberon_id": "UBERON_0001044",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "47": {
+      "tissue_name": "muscle - skeletal",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001134",
+      "display_name": "Skeletal Muscle",
+      "svg_uberon_id": "UBERON_0001134",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "48": {
+      "tissue_name": "nerve - tibial",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001323",
+      "display_name": "Tibial Nerve",
+      "svg_uberon_id": "UBERON_0001021",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "49": {
+      "tissue_name": "ovary",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000992",
+      "display_name": "Ovary",
+      "svg_uberon_id": "UBERON_0000992",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "50": {
+      "tissue_name": "pancreas",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0001264",
+      "display_name": "Pancreas",
+      "svg_uberon_id": "UBERON_0001264",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "51": {
+      "tissue_name": "pituitary",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000007",
+      "display_name": "Pituitary Gland",
+      "svg_uberon_id": "UBERON_0000007",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "52": {
+      "tissue_name": "prostate",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002367",
+      "display_name": "Prostate Gland",
+      "svg_uberon_id": "UBERON_0002367",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "53": {
+      "tissue_name": "skin - not sun exposed (suprapubic)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0036149",
+      "display_name": "Skin (Not Sun Exposed)",
+      "svg_uberon_id": "UBERON_0000014",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "54": {
+      "tissue_name": "skin - sun exposed (lower leg)",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0004264",
+      "display_name": "Skin (Sun Exposed)",
+      "svg_uberon_id": "UBERON_0000014",
+      "is_direct_match": false,
+      "can_visualize": true
+    },
+    "55": {
+      "tissue_name": "small intestine - terminal ileum",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002116",
+      "display_name": "Terminal Ileum",
+      "svg_uberon_id": "UBERON_0002116",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "56": {
+      "tissue_name": "spleen",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002106",
+      "display_name": "Spleen",
+      "svg_uberon_id": "UBERON_0002106",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "57": {
+      "tissue_name": "stomach",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000945",
+      "display_name": "Stomach",
+      "svg_uberon_id": "UBERON_0000945",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "58": {
+      "tissue_name": "testis",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000473",
+      "display_name": "Testis",
+      "svg_uberon_id": "UBERON_0000473",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "59": {
+      "tissue_name": "thyroid",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0002046",
+      "display_name": "Thyroid",
+      "svg_uberon_id": "UBERON_0002046",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "60": {
+      "tissue_name": "uterus",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000995",
+      "display_name": "Uterus",
+      "svg_uberon_id": "UBERON_0000995",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "61": {
+      "tissue_name": "vagina",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000996",
+      "display_name": "Vagina",
+      "svg_uberon_id": "UBERON_0000996",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "62": {
+      "tissue_name": "whole blood",
+      "tissue_type": "tissue",
+      "uberon_id": "UBERON_0000178",
+      "display_name": "Whole Blood",
+      "svg_uberon_id": "UBERON_0000178",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000004": {
+      "tissue_name": "nose",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000004",
+      "display_name": "Nose",
+      "svg_uberon_id": "UBERON_0000004",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000029": {
+      "tissue_name": "lymph node",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000029",
+      "display_name": "Lymph Node",
+      "svg_uberon_id": "UBERON_0000029",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000167": {
+      "tissue_name": "oral cavity",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000167",
+      "display_name": "Oral Cavity",
+      "svg_uberon_id": "UBERON_0000167",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000341": {
+      "tissue_name": "throat",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000341",
+      "display_name": "Throat",
+      "svg_uberon_id": "UBERON_0000341",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000451": {
+      "tissue_name": "prefrontal cortex",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000451",
+      "display_name": "Prefrontal Cortex",
+      "svg_uberon_id": "UBERON_0000451",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000948": {
+      "tissue_name": "heart",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000948",
+      "display_name": "Heart",
+      "svg_uberon_id": "UBERON_0000948",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000966": {
+      "tissue_name": "retina",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000966",
+      "display_name": "Retina",
+      "svg_uberon_id": "UBERON_0000966",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000970": {
+      "tissue_name": "eye",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000970",
+      "display_name": "Eye",
+      "svg_uberon_id": "UBERON_0000970",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000977": {
+      "tissue_name": "pleura",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000977",
+      "display_name": "Pleura",
+      "svg_uberon_id": "UBERON_0000977",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000989": {
+      "tissue_name": "penis",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000989",
+      "display_name": "Penis",
+      "svg_uberon_id": "UBERON_0000989",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0000998": {
+      "tissue_name": "seminal vesicle",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0000998",
+      "display_name": "Seminal Vesicle",
+      "svg_uberon_id": "UBERON_0000998",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001000": {
+      "tissue_name": "epididymis",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001000",
+      "display_name": "Epididymis",
+      "svg_uberon_id": "UBERON_0001000",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001052": {
+      "tissue_name": "rectum",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001052",
+      "display_name": "Rectum",
+      "svg_uberon_id": "UBERON_0001052",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001103": {
+      "tissue_name": "diaphragm",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001103",
+      "display_name": "Diaphragm",
+      "svg_uberon_id": "UBERON_0001103",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001135": {
+      "tissue_name": "smooth muscle",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001135",
+      "display_name": "Smooth Muscle",
+      "svg_uberon_id": "UBERON_0001135",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001153": {
+      "tissue_name": "caecum",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001153",
+      "display_name": "Cecum",
+      "svg_uberon_id": "UBERON_0001153",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001154": {
+      "tissue_name": "ascending colon",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001154",
+      "display_name": "Ascending Colon",
+      "svg_uberon_id": "UBERON_0001154",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001155": {
+      "tissue_name": "colon",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001155",
+      "display_name": "Colon",
+      "svg_uberon_id": "UBERON_0001155",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001295": {
+      "tissue_name": "urethra",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001295",
+      "display_name": "Urethra",
+      "svg_uberon_id": "UBERON_0001295",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001301": {
+      "tissue_name": "duodenum",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001301",
+      "display_name": "Duodenum",
+      "svg_uberon_id": "UBERON_0001301",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001637": {
+      "tissue_name": "artery",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001637",
+      "display_name": "Artery",
+      "svg_uberon_id": "UBERON_0001637",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001706": {
+      "tissue_name": "trachea",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001706",
+      "display_name": "Trachea",
+      "svg_uberon_id": "UBERON_0001706",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001723": {
+      "tissue_name": "tongue",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001723",
+      "display_name": "Tongue",
+      "svg_uberon_id": "UBERON_0001723",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001728": {
+      "tissue_name": "nasopharynx",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001728",
+      "display_name": "Nasopharynx",
+      "svg_uberon_id": "UBERON_0001728",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001736": {
+      "tissue_name": "larynx",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001736",
+      "display_name": "Larynx",
+      "svg_uberon_id": "UBERON_0001736",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001831": {
+      "tissue_name": "parotid gland",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001831",
+      "display_name": "Parotid Gland",
+      "svg_uberon_id": "UBERON_0001831",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001870": {
+      "tissue_name": "frontal lobe",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001870",
+      "display_name": "Frontal Lobe",
+      "svg_uberon_id": "UBERON_0001870",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001871": {
+      "tissue_name": "temporal lobe",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001871",
+      "display_name": "Temporal Lobe",
+      "svg_uberon_id": "UBERON_0001871",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001954": {
+      "tissue_name": "vermis",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001954",
+      "display_name": "Cerebellar Vermis",
+      "svg_uberon_id": "UBERON_0001954",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001981": {
+      "tissue_name": "blood vessel",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001981",
+      "display_name": "Blood Vessel",
+      "svg_uberon_id": "UBERON_0001981",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0001987": {
+      "tissue_name": "placenta",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0001987",
+      "display_name": "Placenta",
+      "svg_uberon_id": "UBERON_0001987",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002079": {
+      "tissue_name": "left cardiac atrium",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002079",
+      "display_name": "Left Atrium",
+      "svg_uberon_id": "UBERON_0002079",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002108": {
+      "tissue_name": "small intestine",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002108",
+      "display_name": "Small Intestine",
+      "svg_uberon_id": "UBERON_0002108",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002110": {
+      "tissue_name": "gall bladder",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002110",
+      "display_name": "Gallbladder",
+      "svg_uberon_id": "UBERON_0002110",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002113": {
+      "tissue_name": "kidney",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002113",
+      "display_name": "Kidney",
+      "svg_uberon_id": "UBERON_0002113",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002114": {
+      "tissue_name": "duodenum",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002114",
+      "display_name": "Duodenum",
+      "svg_uberon_id": "UBERON_0002114",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002134": {
+      "tissue_name": "submandibular gland",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002134",
+      "display_name": "Submandibular Gland",
+      "svg_uberon_id": "UBERON_0002134",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002135": {
+      "tissue_name": "sublingual gland",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002135",
+      "display_name": "Sublingual Gland",
+      "svg_uberon_id": "UBERON_0002135",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002146": {
+      "tissue_name": "ceruminous gland",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002146",
+      "display_name": "Ceruminous Gland",
+      "svg_uberon_id": "UBERON_0002146",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002185": {
+      "tissue_name": "bronchus",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002185",
+      "display_name": "Bronchus",
+      "svg_uberon_id": "UBERON_0002185",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002240": {
+      "tissue_name": "spinal cord",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002240",
+      "display_name": "Spinal Cord",
+      "svg_uberon_id": "UBERON_0002240",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002371": {
+      "tissue_name": "bone marrow",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002371",
+      "display_name": "Bone Marrow",
+      "svg_uberon_id": "UBERON_0002371",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002372": {
+      "tissue_name": "tonsil",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002372",
+      "display_name": "Tonsil",
+      "svg_uberon_id": "UBERON_0002372",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0002481": {
+      "tissue_name": "bone of free limb",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0002481",
+      "display_name": "Bone of Limb",
+      "svg_uberon_id": "UBERON_0002481",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_00024818": {
+      "tissue_name": "sacrum",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_00024818",
+      "display_name": "Sacrum",
+      "svg_uberon_id": "UBERON_00024818",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0003126": {
+      "tissue_name": "trachea",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0003126",
+      "display_name": "Trachea",
+      "svg_uberon_id": "UBERON_0003126",
+      "is_direct_match": true,
+      "can_visualize": true
+    },
+    "svg_0007844": {
+      "tissue_name": "cartilage of external acoustic meatus",
+      "tissue_type": "svg_element",
+      "uberon_id": "UBERON_0007844",
+      "display_name": "Ear Cartilage",
+      "svg_uberon_id": "UBERON_0007844",
+      "is_direct_match": true,
+      "can_visualize": true
+    }
+  },
+  "cell_line_mappings": {
+    "0": {
+      "tissue_name": "A549",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "A549 Cell Line",
+      "cl_ontology_id": null,
+      "exclude_from_anatomagram": true
+    },
+    "1": {
+      "tissue_name": "Caki2",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "Caki2 Cell Line",
+      "cl_ontology_id": null,
+      "exclude_from_anatomagram": true
+    },
+    "2": {
+      "tissue_name": "GM23248",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "GM23248 Cell Line",
+      "cl_ontology_id": null,
+      "exclude_from_anatomagram": true
+    },
+    "3": {
+      "tissue_name": "HepG2",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "HepG2 Cell Line",
+      "cl_ontology_id": null,
+      "exclude_from_anatomagram": true
+    },
+    "4": {
+      "tissue_name": "K562",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "K562 Cell Line",
+      "cl_ontology_id": null,
+      "exclude_from_anatomagram": true
+    },
+    "5": {
+      "tissue_name": "NCI-H460",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "NCI-H460 Cell Line",
+      "cl_ontology_id": null,
+      "exclude_from_anatomagram": true
+    },
+    "6": {
+      "tissue_name": "Panc1",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "Panc1 Cell Line",
+      "cl_ontology_id": null,
+      "exclude_from_anatomagram": true
+    },
+    "29": {
+      "tissue_name": "cells - cultured fibroblasts",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "Cultured Fibroblasts",
+      "cl_ontology_id": "CL:0000057",
+      "exclude_from_anatomagram": true
+    },
+    "30": {
+      "tissue_name": "cells - ebv-transformed lymphocytes",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "EBV-transformed Lymphocytes",
+      "cl_ontology_id": "CL:0000542",
+      "exclude_from_anatomagram": true
+    },
+    "45": {
+      "tissue_name": "lcl",
+      "tissue_type": "cell_line",
+      "uberon_id": null,
+      "display_name": "Lymphoblastoid Cell Line",
+      "cl_ontology_id": null,
+      "exclude_from_anatomagram": true
+    }
+  },
+  "hierarchy_fallbacks": {
+    "UBERON_0002190": "UBERON_0001013",
+    "UBERON_0010414": "UBERON_0001013",
+    "UBERON_0009835": "UBERON_0000956",
+    "UBERON_0013540": "UBERON_0001870",
+    "UBERON_0002726": "UBERON_0002240",
+    "UBERON_0001159": "UBERON_0001155",
+    "UBERON_0001157": "UBERON_0001155",
+    "UBERON_0002469": "UBERON_0001043",
+    "UBERON_0004648": "UBERON_0001043",
+    "UBERON_0000458": "UBERON_0000002",
+    "UBERON_0000362": "UBERON_0002113",
+    "UBERON_0036149": "UBERON_0000014",
+    "UBERON_0004264": "UBERON_0000014",
+    "UBERON_0001323": "UBERON_0001021",
+    "UBERON_0007610": "UBERON_0001637",
+    "UBERON_0001830": "UBERON_0001044",
+    "UBERON_0001894": "UBERON_0002037",
+    "UBERON_0001896": "UBERON_0002037",
+    "UBERON_0001897": "UBERON_0002037",
+    "UBERON_0002363": "UBERON_0002421",
+    "UBERON_0002771": "UBERON_0002421"
+  },
+  "metadata": {
+    "description": "Enhanced unified mapping with hierarchy resolution and complete SVG coverage",
+    "svg_coverage": "All male, female, and brain SVG elements mapped",
+    "hierarchy_fallbacks": 21,
+    "created": "2024-09-11",
+    "updated": "2024-10-16",
+    "source": "Manual corrections + CL terms + hierarchy resolution + comprehensive SVG validation + brain direct mapping fixes"
+  }
+}

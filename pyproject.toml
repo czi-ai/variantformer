@@ -47,6 +47,13 @@ dependencies = [
 notebook = [
     "jupyter>=1.1.1",
 ]
+marimo = [
+    "marimo>=0.14.16",
+    "anywidget>=0.9.13",
+    "plotly>=5.17.0",
+    "umap-learn>=0.5.4",
+    "scikit-learn>=1.3.0",
+]
 test = [
     "pytest>=8.4.2",
 ]

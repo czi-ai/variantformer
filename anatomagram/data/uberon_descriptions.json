@@ -1,0 +1,1224 @@
+{
+  "UBERON_0000002": {
+    "description": "Lower, narrow portion of the uterus where it joins with the top end of the vagina.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000002",
+    "label": "Uterine Cervix",
+    "obo_id": "UBERON:0000002",
+    "ols_label": "uterine cervix",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  },
+  "UBERON_0000004": {
+    "description": "The olfactory organ of vertebrates, consisting of nares, olfactory epithelia and the structures and skeletal framework of the nasal cavity.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000004",
+    "label": "Nose",
+    "obo_id": "UBERON:0000004",
+    "ols_label": "nose",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000007": {
+    "description": "The pituitary gland is an endocrine gland that secretes hormones that regulate many other glands [GO]. An endocrine gland located ventral to the diencephalon and derived from mixed neuroectodermal and non neuroectodermal origin [ZFIN].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000007",
+    "label": "Pituitary",
+    "obo_id": "UBERON:0000007",
+    "ols_label": "pituitary gland",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000014": {
+    "description": "Any portion of the organ that covers that body and consists of a layer of epidermis and a layer of dermis.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000014",
+    "label": "Zone of Skin",
+    "obo_id": "UBERON:0000014",
+    "ols_label": "zone of skin",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000029": {
+    "description": "Any of the rounded masses of lymphoid tissue that are surrounded by a capsule of connective tissue, are distributed along the lymphatic vessels, and contain numerous lymphocytes which filter the flow of lymph.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000029",
+    "label": "Lymph Node",
+    "obo_id": "UBERON:0000029",
+    "ols_label": "lymph node",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000167": {
+    "description": "Anatomical cavity at the start of the digestive tract that that is enclosed by the mouth. The boundaries and contents vary depending on the species. In vertebrates, the boundaries are the oral opening, the cheeks, the palate and (if present) the palatoglossal arch - if this is not present then the mouth and pharynx form the oropharyngeal cavity. The buccal cavity contains the teeth, tongue and palate (when present).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000167",
+    "label": "Oral Cavity",
+    "obo_id": "UBERON:0000167",
+    "ols_label": "oral cavity",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000178": {
+    "description": "A fluid that is composed of blood plasma and erythrocytes.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000178",
+    "label": "Blood",
+    "obo_id": "UBERON:0000178",
+    "ols_label": "blood",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000310": {
+    "description": "The upper ventral region of the torso of an organism.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000310",
+    "label": "Breast",
+    "obo_id": "UBERON:0000310",
+    "ols_label": "breast",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000341": {
+    "description": "In anatomy, the throat is the anterior part of the neck, in front of the vertebral column. It consists of the pharynx and larynx. An important feature of the throat is the epiglottis, a flap which separates the esophagus from the trachea and prevents inhalation of food or drink. The throat contains various blood vessels, various pharyngeal muscles, the trachea (windpipe) and the esophagus. The hyoid bone and the clavicle are the only bones located in the throat of mammals. It is sometimes considered a synonym for fauces. [WP,unvetted].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000341",
+    "label": "Throat",
+    "obo_id": "UBERON:0000341",
+    "ols_label": "throat",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000451": {
+    "description": "The anterior part of the frontal lobes of the brain, lying in front of the motor and premotor areas.nnThis brain region has been implicated in planning complex cognitive behaviors, personality expression, decision making and moderating correct social behavior. The basic activity of this brain region is considered to be orchestration of thoughts and actions in accordance with internal goals.nnThe most typical psychological term for functions carried out by the pre-frontal cortex area is executive function. Executive function relates to abilities to differentiate among conflicting thoughts, determine good and bad, better and best, same and different, future consequences of current activities, working toward a defined goal, prediction of outcomes, expectation based on actions, and social 'control' (the ability to suppress urges that, if not suppressed, could lead to socially-unacceptable outcomes).nnMany authors have indicated an integral link between a person's personality and the functions of the prefrontal cortex. - definition adapted from Wikipedia.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000451",
+    "label": "Prefrontal Cortex",
+    "obo_id": "UBERON:0000451",
+    "ols_label": "prefrontal cortex",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0000473": {
+    "description": "A gonad of a male animal. A gonad produces and releases sperm.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000473",
+    "label": "Testis",
+    "obo_id": "UBERON:0000473",
+    "ols_label": "testis",
+    "simplified": false,
+    "svg_sources": [
+      "male"
+    ]
+  },
+  "UBERON_0000945": {
+    "description": "An expanded region of the vertebrate alimentary tract that serves as a food storage compartment and digestive organ. A stomach is lined, in whole or in part by a glandular epithelium.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000945",
+    "label": "Stomach",
+    "obo_id": "UBERON:0000945",
+    "ols_label": "stomach",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000947": {
+    "description": "The main trunk of the systemic arterial system that carries blood from the heart to all the organs and other structures of the body, bringing oxygenated blood to all parts of the body in the systemic circulation.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000947",
+    "label": "Aorta",
+    "obo_id": "UBERON:0000947",
+    "ols_label": "aorta",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000948": {
+    "description": "A myogenic muscular circulatory organ found in the vertebrate cardiovascular system composed of chambers of cardiac muscle. It is the primary circulatory organ.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000948",
+    "label": "Heart",
+    "obo_id": "UBERON:0000948",
+    "ols_label": "heart",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000955": {
+    "description": "The brain is the center of the nervous system in all vertebrate, and most invertebrate, animals. Some primitive animals such as jellyfish and starfish have a decentralized nervous system without a brain, while sponges lack any nervous system at all. In vertebrates, the brain is located in the head, protected by the skull and close to the primary sensory apparatus of vision, hearing, balance, taste, and smell[WP].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000955",
+    "label": "Brain",
+    "obo_id": "UBERON:0000955",
+    "ols_label": "brain",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000956": {
+    "description": "The thin layer of gray matter on the surface of the cerebral hemisphere that develops from the telencephalon. It consists of the neocortex (6 layered cortex or isocortex), the hippocampal formation and the olfactory cortex.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000956",
+    "label": "Cerebral Cortex",
+    "obo_id": "UBERON:0000956",
+    "ols_label": "cerebral cortex",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0000966": {
+    "description": "The retina is the innermost layer or coating at the back of the eyeball, which is sensitive to light and in which the optic nerve terminates.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000966",
+    "label": "Retina",
+    "obo_id": "UBERON:0000966",
+    "ols_label": "retina",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000970": {
+    "description": "An organ that detects light.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000970",
+    "label": "Eye",
+    "obo_id": "UBERON:0000970",
+    "ols_label": "eye",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000977": {
+    "description": "The invaginated serous membrane that surrounds the lungs (the visceral portion) and lines the walls of the pleural cavity (parietal portion).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000977",
+    "label": "Pleura",
+    "obo_id": "UBERON:0000977",
+    "ols_label": "pleura",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0000989": {
+    "description": "An intromittent organ in certain biologically male organisms. In placental mammals, this also serves as the organ of urination.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000989",
+    "label": "Penis",
+    "obo_id": "UBERON:0000989",
+    "ols_label": "penis",
+    "simplified": false,
+    "svg_sources": [
+      "male"
+    ]
+  },
+  "UBERON_0000992": {
+    "description": "The gonad of a female organism which contains germ cells.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000992",
+    "label": "Ovary",
+    "obo_id": "UBERON:0000992",
+    "ols_label": "ovary",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  },
+  "UBERON_0000995": {
+    "description": "The female muscular organ of gestation in which the developing embryo or fetus is nourished until birth.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000995",
+    "label": "Uterus",
+    "obo_id": "UBERON:0000995",
+    "ols_label": "uterus",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  },
+  "UBERON_0000996": {
+    "description": "A fibromuscular tubular tract leading from the uterus to the exterior of the body in female placental mammals and marsupials, or to the cloaca in female birds, monotremes, and some reptiles[WP].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000996",
+    "label": "Vagina",
+    "obo_id": "UBERON:0000996",
+    "ols_label": "vagina",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  },
+  "UBERON_0000998": {
+    "description": "Either of a pair of glandular pouches that lie one on either side of the male reproductive tract posterolateral to the urinary bladder and in the human male secrete a sugar- and protein-containing fluid into the ejaculatory duct.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000998",
+    "label": "Seminal Vesicle",
+    "obo_id": "UBERON:0000998",
+    "ols_label": "seminal vesicle",
+    "simplified": false,
+    "svg_sources": [
+      "male"
+    ]
+  },
+  "UBERON_0001000": {
+    "description": "A secretory duct that transports sperm from the testis. In mammals this is a continuation of the epididymis and ends in the prostatic urethra where it terminates to form ejaculatory duct.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001000",
+    "label": "Vas Deferens",
+    "obo_id": "UBERON:0001000",
+    "ols_label": "vas deferens",
+    "simplified": false,
+    "svg_sources": [
+      "male"
+    ]
+  },
+  "UBERON_0001013": {
+    "description": "Portion of connective tissue composed of adipocytes enmeshed in areolar tissue.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001013",
+    "label": "Adipose Tissue",
+    "obo_id": "UBERON:0001013",
+    "ols_label": "adipose tissue",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001021": {
+    "description": "An enclosed, cable-like bundle of axons in the peripheral nervous system originating in a nerve root in the central nervous system (or a condensed nervous structure) connecting with peripheral structures.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001021",
+    "label": "Nerve",
+    "obo_id": "UBERON:0001021",
+    "ols_label": "nerve",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001043": {
+    "description": "Tube that connects the pharynx to the stomach. In mammals, the oesophagus connects the buccal cavity with the stomach. The stratified squamous non-keratinised epithelium lining the buccal cavity is continued through the pharynx down into the oesophagus. The lowest part of the oesophagus (ca. 2 cm) is lined with gastric mucosa and covered by peritoneum. The main body of the oesophagus is lined with small, simple mucous glands. Each gland opens into the lumen by a long duct which pierces the muscularis mucosae (Wilson and Washington, 1989). A sphincter is situated at the point where the oesophagus enters the stomach to prevent gastro-oesophageal reflux, i.e. to prevent acidic gastric contents from reaching stratified epithelia of the oesophagus, where they can cause inflammation and irritation (Wilson and Washington, 1989; Brown et al., 1993).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001043",
+    "label": "Esophagus",
+    "obo_id": "UBERON:0001043",
+    "ols_label": "esophagus",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001044": {
+    "description": "Saliva-secreting exocrine glands of the oral cavity[GO].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001044",
+    "label": "Saliva-Secreting Gland",
+    "obo_id": "UBERON:0001044",
+    "ols_label": "saliva-secreting gland",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001052": {
+    "description": "The terminal portion of the intestinal tube, terminating with the anus.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001052",
+    "label": "Rectum",
+    "obo_id": "UBERON:0001052",
+    "ols_label": "rectum",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001103": {
+    "description": "A thin musculomebranous barrier that separates the abdominal and thoracic cavities. Often used for breathing control.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001103",
+    "label": "Diaphragm",
+    "obo_id": "UBERON:0001103",
+    "ols_label": "diaphragm",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001134": {
+    "description": "Muscle tissue that consists primarily of skeletal muscle fibers.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001134",
+    "label": "Skeletal Muscle",
+    "obo_id": "UBERON:0001134",
+    "ols_label": "skeletal muscle tissue",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001135": {
+    "description": "Muscle tissue which is unstriated, composed primarily of smooth muscle fibers surrounded by a reticulum of collagen and elastic fibers. Smooth muscle differs from striated muscle in the much higher actin/myosin ratio, the absence of conspicuous sarcomeres and the ability to contract to a much smaller fraction of its resting length[GO].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001135",
+    "label": "Smooth Muscle",
+    "obo_id": "UBERON:0001135",
+    "ols_label": "smooth muscle tissue",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001153": {
+    "description": "A pouch in the digestive tract that connects the ileum with the ascending colon of the large intestine. It is separated from the ileum by the ileocecal valve, and is the beginning of the large intestine. It is also separated from the colon by the cecocolic junction.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001153",
+    "label": "Caecum",
+    "obo_id": "UBERON:0001153",
+    "ols_label": "caecum",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001154": {
+    "description": "A blind-ended tube connected to the cecum, from which it develops embryologically[WP].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001154",
+    "label": "Vermiform Appendix",
+    "obo_id": "UBERON:0001154",
+    "ols_label": "vermiform appendix",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001155": {
+    "description": "A portion of the large intestine before it becomes the rectum. In mammals, the colon is the most part of the large intestine, excluding the vermiform appendix, the rectum and the anal canal.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001155",
+    "label": "Colon",
+    "obo_id": "UBERON:0001155",
+    "ols_label": "colon",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001225": {
+    "description": "Outer cortical portion of the kidney, between the renal capsule and the renal medulla.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001225",
+    "label": "Cortex Of Kidney",
+    "obo_id": "UBERON:0001225",
+    "ols_label": "cortex of kidney",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001255": {
+    "description": "Distensible musculomembranous organ situated in the anterior part of the pelvic cavity in which urine collects before excretion[MP].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001255",
+    "label": "Bladder",
+    "obo_id": "UBERON:0001255",
+    "ols_label": "urinary bladder",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001264": {
+    "description": "An endoderm derived structure that produces precursors of digestive enzymes and blood glucose regulating hormones[GO].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001264",
+    "label": "Pancreas",
+    "obo_id": "UBERON:0001264",
+    "ols_label": "pancreas",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001295": {
+    "description": "The glandular mucous membrane lining of the uterine cavity that is hormonally responsive during the estrous/menstrual cycle and during pregnancy.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001295",
+    "label": "Endometrium",
+    "obo_id": "UBERON:0001295",
+    "ols_label": "endometrium",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  },
+  "UBERON_0001301": {
+    "description": "The elongated structure connected to the posterior surface of the testis that transports, stores, and matures spermatozoa between testis and vas deferens.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001301",
+    "label": "Epididymis",
+    "obo_id": "UBERON:0001301",
+    "ols_label": "epididymis",
+    "simplified": false,
+    "svg_sources": [
+      "male"
+    ]
+  },
+  "UBERON_0001621": {
+    "description": "An artery that supplies the myocardium.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001621",
+    "label": "Coronary Artery",
+    "obo_id": "UBERON:0001621",
+    "ols_label": "coronary artery",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001637": {
+    "description": "An epithelial tube or tree of tibes that transports blood away from the heart[modified from AEO definition].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001637",
+    "label": "Artery",
+    "obo_id": "UBERON:0001637",
+    "ols_label": "artery",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001706": {
+    "description": "The nasal septum separates the left and right airways in the nose, dividing the two nostrils. It is depressed by the Depressor septi nasi muscle. [WP,unvetted].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001706",
+    "label": "Nasal Septum",
+    "obo_id": "UBERON:0001706",
+    "ols_label": "nasal septum",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001723": {
+    "description": "A muscular organ in the floor of the mouth.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001723",
+    "label": "Tongue",
+    "obo_id": "UBERON:0001723",
+    "ols_label": "tongue",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001728": {
+    "description": "The section of the pharynx that lies above the soft palate.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001728",
+    "label": "Nasopharynx",
+    "obo_id": "UBERON:0001728",
+    "ols_label": "nasopharynx",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001736": {
+    "description": "Either of the paired compound tubuloalveolar (aka tubuloacinar) major salivary glands composed of both serous and mucous secretory cells and situated beneath the mandible.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001736",
+    "label": "Submandibular Gland",
+    "obo_id": "UBERON:0001736",
+    "ols_label": "submandibular gland",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001831": {
+    "description": "The parotid gland is the largest of the salivary glands. It is found wrapped around the mandibular ramus, and it secretes saliva through Stensen's duct into the oral cavity, to facilitate mastication and swallowing. [WP,unvetted].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001831",
+    "label": "Parotid Gland",
+    "obo_id": "UBERON:0001831",
+    "ols_label": "parotid gland",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001870": {
+    "description": "Anterior portion of the neocortex, lying anterior to the central sulcus in humans. It is bounded by the parietal cortex posteriorly and the temporal cortex laterally[NIFSTD,modified].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001870",
+    "label": "Frontal Cortex",
+    "obo_id": "UBERON:0001870",
+    "ols_label": "frontal cortex",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0001871": {
+    "description": "Lower lateral part of the cerebral hemisphere. (MSH).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001871",
+    "label": "Temporal Lobe",
+    "obo_id": "UBERON:0001871",
+    "ols_label": "temporal lobe",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0001872": {
+    "description": "Upper central part of the cerebral hemisphere. (MSH).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001872",
+    "label": "Parietal Lobe",
+    "obo_id": "UBERON:0001872",
+    "ols_label": "parietal lobe",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001873": {
+    "description": "Subcortical nucleus of telecephalic origin consisting of an elongated gray mass lying lateral to and bordering the lateral ventricle. It is divided into a head, body and tail in some species.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001873",
+    "label": "Caudate Nucleus",
+    "obo_id": "UBERON:0001873",
+    "ols_label": "caudate nucleus",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001874": {
+    "description": "Subcortical nucleus of telencephalic , which together with the caudate nucleus, forms the striatum. The putamen lies lateral to the internal capsule and medial to the external medullary lamina, and is separated from the caudate nucleus by the fibers of the internal capsule for most of its length, except at its anterior portion.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001874",
+    "label": "Putamen",
+    "obo_id": "UBERON:0001874",
+    "ols_label": "putamen",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001875": {
+    "description": "Subcortical nucleus, functionally part of the basal ganglia, which consists of two segments the external (or lateral) and internal (or medial) separated by the medial medullary lamina in primates. In rodents, The globus pallidus lateral is separated from the medial segment by the fibers of the internal capsule/cerebral peduncle.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001875",
+    "label": "Globus Pallidus",
+    "obo_id": "UBERON:0001875",
+    "ols_label": "globus pallidus",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001876": {
+    "description": "Subcortical brain region lying anterior to the hippocampal formation in the temporal lobe and anterior to the temporal horn of the lateral ventricle in some species. It is usually subdivided into several groups. Functionally, it is not considered a unitary structure (MM).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001876",
+    "label": "Amygdala",
+    "obo_id": "UBERON:0001876",
+    "ols_label": "amygdala",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0001882": {
+    "description": "A region of the brain consisting of a collection of neurons located in the forebrain ventral to the caudate and putamen. (caudoputamen in rodent) and continuous with these structures. There is no distinct boundary between the nucleus accumbens and the caudate/putamen, but in rodents, it can be identified by its lack of traversing fiber bundles in comparison to the dorsal striatum. Its principle neuron is the medium spiny neuron. Together with the neostriatum (caudate nucleus and putamen), the nucleus accumbens forms the striatum.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001882",
+    "label": "Nucleus Accumbens",
+    "obo_id": "UBERON:0001882",
+    "ols_label": "nucleus accumbens",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001894": {
+    "description": "The division of the forebrain that develops from the foremost primary cerebral vesicle.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001894",
+    "label": "Diencephalon",
+    "obo_id": "UBERON:0001894",
+    "ols_label": "diencephalon",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001896": {
+    "description": "Organ component of neuraxis that has as its parts the medullary reticular formation, inferior olivary complex and cochlear nuclear complex, among other structures[FMA]. The medulla oblongata lies directly above the spinal cord and controls vital autonomic functions such as digestion, breathing and the control of heart rate[GO].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001896",
+    "label": "Medulla Oblongata",
+    "obo_id": "UBERON:0001896",
+    "ols_label": "medulla oblongata",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001897": {
+    "description": "Subcortical brain region consisting of paired gray matter bodies in the dorsal diencephalon and forming part of the lateral wall of the third ventricle of the brain. The thalamus represents the major portion of the diencephalon and is commonly divided into cellular aggregates known as nuclear groups.(MeSH). The dorsal topographic division of the interbrain. The macrodissected adult human thalamus was clearly illustrated by Vesalius in 1543 and the term as defined here was introduced by His in 1893. It includes the traditional epithalamus, dorsal thalamus, and ventral thalamus of Herrick (1910, pp. 494, 498). Also see Kuhlenbeck (1927, Ch. 9) and Jones (1985, p. 87).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001897",
+    "label": "Dorsal Plus Ventral Thalamus",
+    "obo_id": "UBERON:0001897",
+    "ols_label": "dorsal plus ventral thalamus",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001898": {
+    "description": "A specialized brain region of the ventral diencephalon arising near the end of the segmentation period; the embryonic hypothalamic region will give rise to the posterior pituitary gland as well as a number of brain nuclei. [ZFA]. One of the most important functions of the hypothalamus is to link the nervous system to the endocrine system via the pituitary gland (hypophysis).[Wikipedia].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001898",
+    "label": "Hypothalamus",
+    "obo_id": "UBERON:0001898",
+    "ols_label": "hypothalamus",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001905": {
+    "description": "A midline, cone like structure located in the dorso-caudal roof of the 3rd ventricle, attached by peduncles to the habenular and posterior commissures. The stalk contains nerve fibers, blood vessels, connective tissue and parenchymal cells (Paxinos, The Rat Central Nervous System, 2nd ed, pg 399).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001905",
+    "label": "Pineal Body",
+    "obo_id": "UBERON:0001905",
+    "ols_label": "pineal body",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0001954": {
+    "description": "A part of the brain consisting of a three layered cortex located in the forebrain bordering the medial surface of the lateral ventricle. The term hippocampus is often used synonymously with hippocampal formation which consists of the hippocampus proper or Cornu Ammonis, the dentate gyrus and the subiculum.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001954",
+    "label": "Ammon'S Horn",
+    "obo_id": "UBERON:0001954",
+    "ols_label": "Ammon's horn",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0001981": {
+    "description": "A vessel through which blood circulates in the body.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001981",
+    "label": "Blood Vessel",
+    "obo_id": "UBERON:0001981",
+    "ols_label": "blood vessel",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0001987": {
+    "description": "Organ of metabolic interchange between fetus and mother, partly of embryonic origin and partly of maternal origin[GO]. The fetal portion of the placenta is known as the villous chorion. The maternal portion is known as the decidua basalis. The two portions are held together by anchoring villi that are anchored to the decidua basalis by the cytotrophoblastic shell.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0001987",
+    "label": "Placenta",
+    "obo_id": "UBERON:0001987",
+    "ols_label": "placenta",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  },
+  "UBERON_0002021": {
+    "description": "Posterior part of the cerebral hemisphere (MSH).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002021",
+    "label": "Occipital Lobe",
+    "obo_id": "UBERON:0002021",
+    "ols_label": "occipital lobe",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0002037": {
+    "description": "Part of the metencephalon that lies in the posterior cranial fossa behind the brain stem. It is concerned with the coordination of movement[MESH]. A large dorsally projecting part of the brain concerned especially with the coordination of muscles and the maintenance of bodily equilibrium, situated between the brain stem and the back of the cerebrum , and formed in humans of two lateral lobes and a median lobe[BTO]. Brain structure derived from the anterior hindbrain, and perhaps including posterior midbrain. The cerebellum plays a role in somatic motor function, the control of muscle tone, and balance[ZFA].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002037",
+    "label": "Cerebellum Hemisphere",
+    "obo_id": "UBERON:0002037",
+    "ols_label": "cerebellum",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0002038": {
+    "description": "Predominantly gray matter midbrain structure lying dorsal to the crus cerebri and ventral to the midbrain tegmentum. It is divided into a dorsal, cellularly compact region known as the pars compacta and a more ventrally located, containing more loosely packed cells, the pars reticulata. The most lateral region of the reticulata is identified as the pars lateralis (MM).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002038",
+    "label": "Substantia Nigra",
+    "obo_id": "UBERON:0002038",
+    "ols_label": "substantia nigra",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0002046": {
+    "description": "A two-lobed endocrine gland found in all vertebrates, located in front of and on either side of the trachea in humans, and producing various hormones, such as triiodothyronine and calcitonin[BTO].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002046",
+    "label": "Thyroid",
+    "obo_id": "UBERON:0002046",
+    "ols_label": "thyroid gland",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002048": {
+    "description": "Respiration organ that develops as an outpocketing of the esophagus.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002048",
+    "label": "Lung",
+    "obo_id": "UBERON:0002048",
+    "ols_label": "lung",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002079": {
+    "description": "A cardiac atrium that is in the left side of the heart. It receives oxygenated blood from the pulmonary veins, In mammals this is pumped into the left ventricle, via the Mitral valve.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002079",
+    "label": "Left Cardiac Atrium",
+    "obo_id": "UBERON:0002079",
+    "ols_label": "left cardiac atrium",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002084": {
+    "description": "A cardiac ventricle that is in the left side of the heart.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002084",
+    "label": "Heart Left Ventricle",
+    "obo_id": "UBERON:0002084",
+    "ols_label": "heart left ventricle",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002106": {
+    "description": "The organ that functions to filter blood and to store red corpuscles and platelets.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002106",
+    "label": "Spleen",
+    "obo_id": "UBERON:0002106",
+    "ols_label": "spleen",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002107": {
+    "description": "An exocrine gland which secretes bile and functions in metabolism of protein and carbohydrate and fat, synthesizes substances involved in the clotting of the blood, synthesizes vitamin A, detoxifies poisonous substances, stores glycogen, and breaks down worn-out erythrocytes[GO].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002107",
+    "label": "Liver",
+    "obo_id": "UBERON:0002107",
+    "ols_label": "liver",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002108": {
+    "description": "Subdivision of digestive tract that connects the stomach to the large intestine and is where much of the digestion and absorption of food takes place (with the exception of ruminants). The mammalian small intestine is long and coiled and can be differentiated histologically into: duodenum, jejunem, ileum[WP,cjm,Kardong].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002108",
+    "label": "Small Intestine",
+    "obo_id": "UBERON:0002108",
+    "ols_label": "small intestine",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002110": {
+    "description": "An organ that aids digestion and stores bile produced by the liver[WP].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002110",
+    "label": "Gallbladder",
+    "obo_id": "UBERON:0002110",
+    "ols_label": "gallbladder",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002113": {
+    "description": "A paired organ of the urinary tract that produces urine and maintains bodily fluid homeostasis, blood pressure, pH levels, red blood cell production and skeleton mineralization.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002113",
+    "label": "Kidney",
+    "obo_id": "UBERON:0002113",
+    "ols_label": "kidney",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002114": {
+    "description": "The first part of the small intestine. At the junction of the stomach and the duodenum the alimentary canal is inflected. The duodenum first goes anteriorly for a short distance, turns dorsally, and eventually caudally, thus it is a U-shaped structure with two horizontal sections (a ventral and a dorsal one).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002114",
+    "label": "Duodenum",
+    "obo_id": "UBERON:0002114",
+    "ols_label": "duodenum",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002116": {
+    "description": "The portion of the small intestine that extends from the jejunum to the colon.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002116",
+    "label": "Ileum",
+    "obo_id": "UBERON:0002116",
+    "ols_label": "ileum",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002134": {
+    "description": "An atrioventricular valve that is part of the outflow part of the right atrium.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002134",
+    "label": "Tricuspid Valve",
+    "obo_id": "UBERON:0002134",
+    "ols_label": "tricuspid valve",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002135": {
+    "description": "An atrioventricular valve that is part of the outflow part of the left atrium.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002135",
+    "label": "Mitral Valve",
+    "obo_id": "UBERON:0002135",
+    "ols_label": "mitral valve",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002146": {
+    "description": "The semilunar valve of the heart that lies between the right ventricle and the pulmonary artery.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002146",
+    "label": "Valve",
+    "obo_id": "UBERON:0002146",
+    "ols_label": "pulmonary valve",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002148": {
+    "description": "The locus ceruleus is a dense cluster of neurons within the dorsorostral pons. This nucleus is the major location of neurons that release norepinephrine throughout the brain, and is responsible for physiological responses to stress and panic[GO]. Bluish region in the superior angle of the fourth ventricle floor, corresponding to melanin-like pigmented nerve cells which lie lateral to the ponto-mesencephalic central gray (griseum centrale). It is also known as nucleus pigmentosus pontis[GAID].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002148",
+    "label": "Locus Ceruleus",
+    "obo_id": "UBERON:0002148",
+    "ols_label": "locus ceruleus",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0002185": {
+    "description": "The upper conducting airways of the lung; these airways arise from the terminus of the trachea.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002185",
+    "label": "Bronchus",
+    "obo_id": "UBERON:0002185",
+    "ols_label": "bronchus",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002240": {
+    "description": "Part of the central nervous system located in the vertebral canal continuous with and caudal to the brain; demarcated from brain by plane of foramen magnum. It is composed of an inner core of gray matter in which nerve cells predominate, and an outer layer of white matter in which myelinated nerve fibers predominate, and surrounds the central canal. (CUMBO).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002240",
+    "label": "Spinal Cord",
+    "obo_id": "UBERON:0002240",
+    "ols_label": "spinal cord",
+    "simplified": false,
+    "svg_sources": [
+      "male"
+    ]
+  },
+  "UBERON_0002245": {
+    "description": "A paired regions of the cerebellum that lie outside and lateral to the central vermis[MP]. The cerebellum consists of three parts, a median and two lateral, which are continuous with each other, and are substantially the same in structure. The median portion is constricted, and is called the vermis, from its annulated appearance which it owes to the transverse ridges and furrows upon it; the lateral expanded portions are named the hemispheres. The lateral hemisphere is considered the portion of the cerebellum to develop most recently. [WP,unvetted].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002245",
+    "label": "Cerebellar Hemisphere",
+    "obo_id": "UBERON:0002245",
+    "ols_label": "cerebellar hemisphere",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0002285": {
+    "description": "A brain ventricle that is part of a telencephalon. In mammals and species with an evaginated telencephalon, this is one of a pair of lateral structures, one in each hemisphere.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002285",
+    "label": "Telencephalic Ventricle",
+    "obo_id": "UBERON:0002285",
+    "ols_label": "telencephalic ventricle",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0002360": {
+    "description": "Membrane organ that surrounds the brain and the spinal cord.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002360",
+    "label": "Meninx",
+    "obo_id": "UBERON:0002360",
+    "ols_label": "meninx",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0002363": {
+    "description": "Thick, fibrous meningeal covering surrounding the brain and spinal cord. It is the outermost of the three meningeal coverings. It consists of two layers: the periosteal dura linking the inner surface of the skull and the meningeal dura that lies above the arachnoid dural membrane. The meningeal layer draws away from the periosteal layer and certain locations to form the dural reflections.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002363",
+    "label": "Dura Mater",
+    "obo_id": "UBERON:0002363",
+    "ols_label": "dura mater",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0002367": {
+    "description": "The prostate gland is a partly muscular, partly glandular body that is situated near the base of the mammalian male urethra and secretes an alkaline viscid fluid which is a major constituent of the ejaculatory fluid.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002367",
+    "label": "Prostate",
+    "obo_id": "UBERON:0002367",
+    "ols_label": "prostate gland",
+    "simplified": true,
+    "svg_sources": [
+      "male"
+    ]
+  },
+  "UBERON_0002369": {
+    "description": "Either of a pair of complex endocrine organs near the anterior medial border of the kidney consisting of a mesodermal cortex that produces glucocorticoid, mineralocorticoid, and androgenic hormones and an ectodermal medulla that produces epinephrine and norepinephrine[BTO].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002369",
+    "label": "Adrenal Gland",
+    "obo_id": "UBERON:0002369",
+    "ols_label": "adrenal gland",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002371": {
+    "description": "The soft tissue that fills the cavities of bones.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002371",
+    "label": "Bone Marrow",
+    "obo_id": "UBERON:0002371",
+    "ols_label": "bone marrow",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002372": {
+    "description": "Either of the two small almond-shaped masses of lymph tissue found on either side of the oropharynx.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002372",
+    "label": "Tonsil",
+    "obo_id": "UBERON:0002372",
+    "ols_label": "tonsil",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0002421": {
+    "description": "Hippocampus (proper) plus dentate gyrus and subiculum[definition derived from NIF comments and ontology alignment].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002421",
+    "label": "Hippocampal Formation",
+    "obo_id": "UBERON:0002421",
+    "ols_label": "hippocampal formation",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female",
+      "brain"
+    ]
+  },
+  "UBERON_0002481": {
+    "description": "Skeletal tissue with a collagen-rich extracellular matrix vascularized, mineralized with hydroxyapatite and typically including osteocytes located in lacunae that communicate with one another by cell processes (in canaliculi). Bone is deposited by osteoblasts.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002481",
+    "label": "Bone Tissue",
+    "obo_id": "UBERON:0002481",
+    "ols_label": "bone tissue",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  },
+  "UBERON_00024818": {
+    "description": "OLS data not found",
+    "error": "NOT_FOUND_IN_OLS",
+    "iri": "",
+    "label": "Lymphoid Tissue",
+    "obo_id": "",
+    "ols_label": "",
+    "simplified": false,
+    "svg_sources": [
+      "male"
+    ]
+  },
+  "UBERON_0002702": {
+    "description": "Component of the frontal lobe, lateral aspect (Christine Fennema-Notestine).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002702",
+    "label": "Middle Frontal Gyrus",
+    "obo_id": "UBERON:0002702",
+    "ols_label": "middle frontal gyrus",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0002771": {
+    "description": "Component of the temporal lobe, lateral aspect. The rostral boundary is the rostral extent of the superior temporal sulcus whereas the caudal boundary is the temporo-occipital incisure on the cortical surface. The superior temporal sulcus is the medial boundary and the inferior temporal sulcus is the lateral boundary (Christine Fennema-Notestine).",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0002771",
+    "label": "Middle Temporal Gyrus",
+    "obo_id": "UBERON:0002771",
+    "ols_label": "middle temporal gyrus",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0003027": {
+    "description": "The cingulate cortex is a part of the brain situated in the medial aspect of the cortex. It is extended from the corpus callosum below to the cingulate sulcus above, at least anteriorly. [WP,unvetted].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0003027",
+    "label": "Cingulate Cortex",
+    "obo_id": "UBERON:0003027",
+    "ols_label": "cingulate cortex",
+    "simplified": false,
+    "svg_sources": [
+      "brain"
+    ]
+  },
+  "UBERON_0003126": {
+    "description": "The trachea is the portion of the airway that attaches to the bronchi as it branches [GO:dph].",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0003126",
+    "label": "Trachea",
+    "obo_id": "UBERON:0003126",
+    "ols_label": "trachea",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0003889": {
+    "description": "Initial section of the oviduct through which the ova pass from the ovary to the uterus.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0003889",
+    "label": "Fallopian Tube",
+    "obo_id": "UBERON:0003889",
+    "ols_label": "fallopian tube",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  },
+  "UBERON_0006618": {
+    "description": "A small conical pouch projections located on the upper anterior portion of each atrium of the heart.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0006618",
+    "label": "Atrium",
+    "obo_id": "UBERON:0006618",
+    "ols_label": "atrium auricular region",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0007650": {
+    "description": "The junction between the esophagus and the stomach epithelium.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0007650",
+    "label": "Esophagogastric Junction",
+    "obo_id": "UBERON:0007650",
+    "ols_label": "esophagogastric junction",
+    "simplified": false,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0007844": {
+    "description": "Skeletal element that is composed of cartilage tissue and may be permanent or transient.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0007844",
+    "label": "Cartilage",
+    "obo_id": "UBERON:0007844",
+    "ols_label": "cartilage element",
+    "simplified": true,
+    "svg_sources": [
+      "male",
+      "female"
+    ]
+  },
+  "UBERON_0012249": {
+    "description": "The part of the cervix uteri that protrudes into the vagina and is lined with stratified squamous epithelium.",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0012249",
+    "label": "Ectocervix",
+    "obo_id": "UBERON:0012249",
+    "ols_label": "ectocervix",
+    "simplified": false,
+    "svg_sources": [
+      "female"
+    ]
+  }
+}
