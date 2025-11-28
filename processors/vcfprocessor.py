@@ -59,6 +59,160 @@ class VCFProcessor:
 
         assert torch.cuda.is_available(), "GPU is not available"
         self.accelerator = "gpu"
+    def create_vcf_from_variant(self, variant_df: pd.DataFrame, output_path: str, vcf_path: str = None):
+        """
+        Create a VCF file from a variant dataframe.
+        Args:
+            variant_df: DataFrame with columns: chrom, pos, ref, alt, GT
+            output_path: Path to output VCF file (will be compressed as .vcf.gz)
+            vcf_path: Optional path to existing VCF to merge with
+        """
+        import subprocess
+        import tempfile
+        from pathlib import Path
+        
+        assert 'chrom' in variant_df.columns, "chrom column is required"
+        assert 'pos' in variant_df.columns, "pos column is required"
+        assert 'ref' in variant_df.columns, "ref column is required"
+        assert 'alt' in variant_df.columns, "alt column is required"
+        assert 'GT' in variant_df.columns, "GT column is required"
+        
+        if len(variant_df) == 0:
+            raise ValueError("variant_df is empty")
+        
+        # Get fasta path from config
+        fasta_path = self.vcf_loader_config.fasta_path
+        
+        # Validate reference alleles
+        log.info("Validating reference alleles...")
+        for idx, row in variant_df.iterrows():
+            chrom = row['chrom']
+            pos = int(row['pos'])
+            ref = row['ref']
+            ref_len = len(ref)
+            
+            # Extract reference sequence from fasta
+            region = f"{chrom}:{pos}-{pos + ref_len - 1}"
+            cmd = ["samtools", "faidx", fasta_path, region]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                raise ValueError(f"Failed to extract reference at {region}: {result.stderr}")
+            
+            # Parse fasta output (skip header line)
+            fasta_ref = "".join(result.stdout.strip().split("\n")[1:]).upper()
+            
+            if fasta_ref != ref.upper():
+                raise ValueError(
+                    f"Reference mismatch at {chrom}:{pos}: "
+                    f"expected '{ref}' but found '{fasta_ref}' in reference genome"
+                )
+        
+        log.info("Reference validation successful")
+        
+        # Create temporary VCF file
+        output_dir = Path(output_path).parent
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.vcf', dir=output_dir, delete=False) as tmp_vcf:
+            tmp_vcf_path = tmp_vcf.name
+            
+            # Write VCF header
+            tmp_vcf.write("##fileformat=VCFv4.2\n")
+            tmp_vcf.write(f"##reference={fasta_path}\n")
+            
+            # Write contig headers for chromosomes in the dataframe
+            for chrom in sorted(variant_df['chrom'].unique()):
+                tmp_vcf.write(f"##contig=<ID={chrom}>\n")
+            
+            tmp_vcf.write('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">\n')
+            tmp_vcf.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE\n")
+            
+            # Sort variants by chromosome and position
+            sorted_df = variant_df.sort_values(by=['chrom', 'pos']).reset_index(drop=True)
+            
+            # Write variant records
+            for _, row in sorted_df.iterrows():
+                chrom = row['chrom']
+                pos = int(row['pos'])
+                ref = row['ref']
+                alt = row['alt']
+                gt = row['GT']
+                
+                # Write VCF line with default values
+                line = f"{chrom}\t{pos}\t.\t{ref}\t{alt}\t.\tPASS\t.\tGT\t{gt}\n"
+                tmp_vcf.write(line)
+        
+        log.info(f"Created temporary VCF: {tmp_vcf_path}")
+        
+        # Handle merging or direct output
+        try:
+            if vcf_path is None:
+                # No merging needed, just compress and index
+                log.info("Creating new VCF file...")
+                final_path = output_path if output_path.endswith('.vcf.gz') else f"{output_path}.vcf.gz"
+                
+                # Compress with bgzip
+                subprocess.run(["bgzip", "-c", tmp_vcf_path], 
+                             stdout=open(final_path, 'wb'), check=True)
+                
+                # Index with tabix
+                subprocess.run(["tabix", "-p", "vcf", final_path], check=True)
+                
+                log.info(f"Created and indexed VCF: {final_path}")
+            else:
+                # Merge with existing VCF - insert variants into same sample
+                log.info(f"Merging with existing VCF: {vcf_path}")
+                
+                # Extract sample name from original VCF
+                sample_cmd = ["bcftools", "query", "-l", vcf_path]
+                result = subprocess.run(sample_cmd, capture_output=True, text=True, check=True)
+                original_sample = result.stdout.strip()
+                
+                # Update tmp VCF to use the same sample name
+                with open(tmp_vcf_path, 'r') as f:
+                    vcf_content = f.read()
+                vcf_content = vcf_content.replace('\tSAMPLE\n', f'\t{original_sample}\n')
+                with open(tmp_vcf_path, 'w') as f:
+                    f.write(vcf_content)
+                
+                # Compress and index new VCF
+                sorted_vcf_path = tmp_vcf_path.replace('.vcf', '.sorted.vcf.gz')
+                subprocess.run(["bcftools", "sort", "-o", sorted_vcf_path, "-O", "z", tmp_vcf_path], check=True)
+                subprocess.run(["tabix", "-p", "vcf", sorted_vcf_path], check=True)
+                
+                # Concatenate VCFs (same sample, new variants)
+                final_path = output_path if output_path.endswith('.vcf.gz') else f"{output_path}.vcf.gz"
+                concat_cmd = [
+                    "bcftools", "concat",
+                    "-a",  # Allow duplicates
+                    "-D",  # Remove duplicate positions
+                    "-o", final_path,
+                    "-O", "z",
+                    vcf_path,
+                    sorted_vcf_path
+                ]
+                subprocess.run(concat_cmd, check=True)
+                
+                # Sort and index final VCF
+                temp_sorted = final_path.replace('.vcf.gz', '.temp.sorted.vcf.gz')
+                subprocess.run(["bcftools", "sort", "-o", temp_sorted, "-O", "z", final_path], check=True)
+                subprocess.run(["mv", temp_sorted, final_path], check=True)
+                subprocess.run(["tabix", "-p", "vcf", final_path], check=True)
+                
+                log.info(f"Concatenated and indexed VCF: {final_path}")
+                
+                # Clean up sorted temp file
+                os.remove(sorted_vcf_path)
+                if os.path.exists(sorted_vcf_path + ".tbi"):
+                    os.remove(sorted_vcf_path + ".tbi")
+        finally:
+            # Clean up temporary files
+            if os.path.exists(tmp_vcf_path):
+                os.remove(tmp_vcf_path)
+        
+        return final_path if output_path.endswith('.vcf.gz') else f"{output_path}.vcf.gz"
+
 
     def get_tissues(self):
         return self.tissue_vocab.keys()
