@@ -1,5 +1,6 @@
 import os
 import subprocess
+import tempfile
 from multiprocessing import Pool
 import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor
@@ -13,6 +14,54 @@ class ExtractSeqFromBed:
         self.neighbour_hood = neighbour_hood
         self.ref_fasta = ref_fasta
         self.upstream_neighbour_hood = upstream_neighbour_hood
+
+    def _build_consensus_args(self, vcf_file: str, variant_type: str = None):
+        if variant_type == "SNP":
+            return [
+                "bcftools",
+                "consensus",
+                "-H",
+                "I",
+                "-e",
+                'ALT~\"<.*>\" || TYPE!=\"snp\"',
+                vcf_file,
+            ]
+        return [
+            "bcftools",
+            "consensus",
+            "-H",
+            "I",
+            "-e",
+            'ALT~\"<.*>\"',
+            vcf_file,
+        ]
+
+    def _create_filtered_vcf(self, vcf_file: str, region_str: str):
+        with tempfile.NamedTemporaryFile(suffix=".vcf.gz", delete=False) as tmp_vcf:
+            filtered_vcf = tmp_vcf.name
+        cmd_view = [
+            "bcftools",
+            "view",
+            "-r",
+            region_str,
+            "--regions-overlap",
+            "1",
+            "-Oz",
+            "--write-index",
+            "-o",
+            filtered_vcf,
+            vcf_file,
+        ]
+        result = subprocess.run(cmd_view, capture_output=True, text=True)
+        if result.returncode != 0:
+            self._cleanup_filtered_vcf(filtered_vcf)
+            raise ValueError(f"Error running bcftools view: {result.stderr}")
+        return filtered_vcf
+
+    def _cleanup_filtered_vcf(self, filtered_vcf: str):
+        for path in (filtered_vcf, f"{filtered_vcf}.csi", f"{filtered_vcf}.tbi"):
+            if os.path.exists(path):
+                os.remove(path)
 
     def apply_bcftools_consensus(
         self, region, vcf_file, reference_fasta, variant_type: str = None
@@ -35,40 +84,36 @@ class ExtractSeqFromBed:
             else:
                 mutated_seq = "".join(result_ref.stdout.strip().split("\n")[1:])
                 return mutated_seq, 0
-        # If vcf_file is not None, run bcftools consensus
-        # Command to extract the reference sequence and apply mutations
-        if variant_type == "SNP":
-            bcftools_args = [
-                "bcftools",
-                "consensus",
-                "-H",
-                "I",
-                "-e",
-                'ALT~\"<.*>\" || TYPE!=\"snp\"',
-                vcf_file,
-            ]
-        else:
-            bcftools_args = [
-                "bcftools",
-                "consensus",
-                "-H",
-                "I",
-                "-e",
-                'ALT~\"<.*>\"',
-                vcf_file,
-            ]
+        try:
+            filtered_vcf = self._create_filtered_vcf(vcf_file, region_str)
+        except ValueError as exc:
+            print(region_str)
+            print(f"\n{exc}")
+            print("Falling back to ref genome")
+            result_ref = subprocess.run(cmd_ref, capture_output=True, text=True)
+            if result_ref.returncode != 0:
+                print(f"\nError running samtools faidx: {result_ref.stderr}")
+                return None, 0
+            mutated_seq = "".join(result_ref.stdout.strip().split("\n")[1:])
+            return mutated_seq, 0
 
         # Use piped commands without shell=True
-        samtools_process = subprocess.Popen(
-            cmd_ref, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        result = subprocess.run(
-            bcftools_args, stdin=samtools_process.stdout, capture_output=True, text=True
-        )
-        samtools_process.stdout.close()
-        samtools_stderr = samtools_process.stderr.read()
-        samtools_process.stderr.close()
-        samtools_process.wait()
+        try:
+            samtools_process = subprocess.Popen(
+                cmd_ref, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            )
+            result = subprocess.run(
+                self._build_consensus_args(filtered_vcf, variant_type=variant_type),
+                stdin=samtools_process.stdout,
+                capture_output=True,
+                text=True,
+            )
+            samtools_process.stdout.close()
+            samtools_stderr = samtools_process.stderr.read()
+            samtools_process.stderr.close()
+            samtools_process.wait()
+        finally:
+            self._cleanup_filtered_vcf(filtered_vcf)
 
         # If bcftools consensus fails, return the reference sequence
         if result.returncode != 0:
@@ -412,39 +457,37 @@ class ExtractSeqFromBed:
             else:
                 mutated_seq = "".join(result_ref.stdout.strip().split("\n")[1:])
                 return mutated_seq
-        # If vcf_file is not None, run bcftools consensus
-        if variant_type == "SNP":
-            bcftools_args = [
-                "bcftools",
-                "consensus",
-                "-H",
-                "I",
-                "-e",
-                'ALT~\"<.*>\" || TYPE!=\"snp\"',
-                vcf_file,
-            ]
-        else:
-            bcftools_args = [
-                "bcftools",
-                "consensus",
-                "-H",
-                "I",
-                "-e",
-                'ALT~\"<.*>\"',
-                vcf_file,
-            ]
+        try:
+            filtered_vcf = self._create_filtered_vcf(vcf_file, region_str)
+        except ValueError as exc:
+            print(region_str)
+            print(f"\n{exc}")
+            print("Falling back to reference")
+            result_ref = subprocess.run(cmd_ref, capture_output=True, text=True)
+            if result_ref.returncode != 0:
+                raise ValueError(
+                    f"Error running bcftools consensus: {result_ref.stderr}"
+                )
+            mutated_seq = "".join(result_ref.stdout.strip().split("\n")[1:])
+            return mutated_seq
 
         # Use piped commands without shell=True
-        samtools_process = subprocess.Popen(
-            cmd_ref, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        result = subprocess.run(
-            bcftools_args, stdin=samtools_process.stdout, capture_output=True, text=True
-        )
-        samtools_process.stdout.close()
-        samtools_stderr = samtools_process.stderr.read()
-        samtools_process.stderr.close()
-        samtools_process.wait()
+        try:
+            samtools_process = subprocess.Popen(
+                cmd_ref, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            )
+            result = subprocess.run(
+                self._build_consensus_args(filtered_vcf, variant_type=variant_type),
+                stdin=samtools_process.stdout,
+                capture_output=True,
+                text=True,
+            )
+            samtools_process.stdout.close()
+            samtools_stderr = samtools_process.stderr.read()
+            samtools_process.stderr.close()
+            samtools_process.wait()
+        finally:
+            self._cleanup_filtered_vcf(filtered_vcf)
 
         if result.returncode != 0:
             print(region_str)
