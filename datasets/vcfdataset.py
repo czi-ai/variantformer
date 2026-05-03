@@ -216,14 +216,26 @@ class VCFDataset(Dataset):
             attention_mask = attention_mask[: self.max_length]
         return token_ids, attention_mask
 
-    def _get_cres(self, gene_id: str, gene_info: dict, vcf_path: str) -> pd.DataFrame:
-        """Get the cres for a given gene id
+    def _resolve_cres(
+        self, gene_id: str, gene_info: dict, vcf_path: str
+    ) -> pd.DataFrame:
+        """Run the CRE-resolution pipeline for ``gene_id``.
+
+        Reads the per-gene CRE manifest, runs ``ExtractSeqFromBed.process_subject``
+        (which may silently drop CREs whose sequence extraction fails), and
+        applies the minus-strand reversal. The resulting rows are in the exact
+        order the model consumes them, so they align 1-to-1 with the cross-
+        attention key axis.
 
         Args:
-            gene_id: Gene ID
+            gene_id: ENSEMBL gene id.
+            gene_info: gene metadata returned by ``_get_gene_info``.
+            vcf_path: VCF used for sequence extraction (or ``None`` for ref).
 
         Returns:
-            pd.DataFrame: A dataframe containing the cres for the given gene id
+            pd.DataFrame with the per-CRE columns produced by ``process_subject``
+            (notably ``chrom``, ``start_cre``, ``end_cre``, ``cCRE``,
+            ``sequence``) in model order.
         """
         gene_cre_map_path = self.gene_cre_manifest.get_file_path(gene_id)
         genes_cre_map = multi_try_load_csv(gene_cre_map_path)
@@ -244,6 +256,47 @@ class VCFDataset(Dataset):
             cres = cres.iloc[
                 ::-1
             ]  # reverse the cres if the gene is on the minus strand
+        return cres
+
+    def get_cre_positions(
+        self, gene_id: str, vcf_path: str | None = None
+    ) -> pd.DataFrame:
+        """Return CRE genomic positions in the order the model consumes them.
+
+        Re-runs the same CRE-resolution pipeline used internally during a
+        forward pass (manifest → ``ExtractSeqFromBed.process_subject`` →
+        strand flip). The returned rows therefore align 1-to-1 with the CRE
+        token (key) axis of the model's cross-attention, including any drops
+        ``process_subject`` may apply mid-manifest.
+
+        Args:
+            gene_id: ENSEMBL gene id present in the dataset.
+            vcf_path: VCF path; defaults to ``self.vcf_path``.
+
+        Returns:
+            DataFrame with columns ``chromosome``, ``start_cre``, ``end_cre``,
+            ``cre_name`` indexed in model order.
+        """
+        if vcf_path is None:
+            vcf_path = self.vcf_path
+        gene_info = self._get_gene_info(gene_id)
+        cres = self._resolve_cres(gene_id, gene_info, vcf_path)
+        return (
+            cres[["chrom", "start_cre", "end_cre", "cCRE"]]
+            .rename(columns={"chrom": "chromosome", "cCRE": "cre_name"})
+            .reset_index(drop=True)
+        )
+
+    def _get_cres(self, gene_id: str, gene_info: dict, vcf_path: str) -> pd.DataFrame:
+        """Get the cres for a given gene id
+
+        Args:
+            gene_id: Gene ID
+
+        Returns:
+            pd.DataFrame: A dataframe containing the cres for the given gene id
+        """
+        cres = self._resolve_cres(gene_id, gene_info, vcf_path)
 
         X = []
         attentions = []
