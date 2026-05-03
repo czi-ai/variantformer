@@ -9,6 +9,7 @@ from flash_attn.bert_padding import (
     unpad_input,
 )
 from typing import Union
+from einops import rearrange
 
 
 # From https://github.com/ofirpress/attention_with_linear_biases/blob/4b92f28a005ead2567abe2359f633e73e08f3833/fairseq/models/transformer.py#L742
@@ -349,6 +350,14 @@ class FlashAttLayer(nn.Module):
                 use_alibi=use_alibi,
                 cross_attn=cross_attn,
             )
+        self.use_alibi = use_alibi
+        self.causal = False
+        # When True, the layer recomputes the full attention matrix during
+        # forward and stores it on `self.attn_matrix`. Off by default to keep
+        # the FlashAttention fast path unaffected; the LogAttention callback
+        # toggles it on for selected layers around the forward pass.
+        self.log_attn_matrix = False
+        self.attn_matrix = None
 
     def forward(
         self,
@@ -485,7 +494,204 @@ class FlashAttLayer(nn.Module):
 
             else:
                 x = self.MHA(src)
+
+        if self.log_attn_matrix:
+            self.attn_matrix = self._compute_logged_attn_matrix(
+                src=src,
+                cntx=cntx,
+                unpad_info=unpad_info,
+                context_unpad_info=context_unpad_info,
+            )
         return x
+
+    def _compute_logged_attn_matrix(
+        self,
+        src: torch.Tensor,
+        cntx: torch.Tensor | None,
+        unpad_info: dict | None,
+        context_unpad_info: dict | None,
+    ) -> torch.Tensor:
+        """Re-pad the unpadded inputs and compute the full attention matrix.
+
+        This is only invoked when ``log_attn_matrix`` is True. It mirrors how
+        the model is actually run in this codebase: the modulators always pass
+        unpadded tensors through with companion ``unpad_info``/``context_unpad_info``
+        dicts.
+        """
+        assert (
+            unpad_info is not None
+        ), "log_attn_matrix=True requires unpad_info; logging is only supported on the unpadded code path"
+        if self.cross_attn:
+            assert (
+                context_unpad_info is not None
+            ), "log_attn_matrix=True with cross_attn=True requires context_unpad_info"
+
+        max_seqlen_q = unpad_info["max_seqlen"]
+        max_seqlen_k = (
+            context_unpad_info["max_seqlen"]
+            if context_unpad_info is not None
+            else unpad_info["max_seqlen"]
+        )
+
+        # Reconstruct the padded src and its boolean key-padding mask
+        src_mask = torch.ones(src.shape[0], src.shape[1], device=src.device)
+        original_src_key_padding_mask = ~pad_input(
+            src_mask,
+            unpad_info["indices"],
+            unpad_info["batch"],
+            unpad_info["seqlen"],
+        ).bool()[:, :, 0]
+        src_padded = pad_input(
+            src, unpad_info["indices"], unpad_info["batch"], unpad_info["seqlen"]
+        )
+
+        if self.cross_attn:
+            context_mask = torch.ones(
+                cntx.shape[0], cntx.shape[1], device=cntx.device
+            )
+            original_context_key_padding_mask = ~pad_input(
+                context_mask,
+                context_unpad_info["indices"],
+                context_unpad_info["batch"],
+                context_unpad_info["seqlen"],
+            ).bool()[:, :, 0]
+            cntx_padded = pad_input(
+                cntx,
+                context_unpad_info["indices"],
+                context_unpad_info["batch"],
+                context_unpad_info["seqlen"],
+            )
+        else:
+            cntx_padded = None
+            original_context_key_padding_mask = None
+
+        return self.calculate_attention_matrix(
+            src_padded,
+            cntx_padded,
+            original_src_key_padding_mask,
+            original_context_key_padding_mask,
+            max_seqlen_q,
+            max_seqlen_k,
+        )
+
+    def calculate_attention_matrix(
+        self,
+        src: torch.Tensor,
+        cntx: torch.Tensor | None = None,
+        src_key_padding_mask: torch.Tensor | None = None,
+        context_key_padding_mask: torch.Tensor | None = None,
+        max_seqlen_q: int | None = None,
+        max_seqlen_k: int | None = None,
+        cleanup: bool = True,
+    ) -> torch.Tensor:
+        """Compute the full attention matrix (with ALiBi) for self/cross attention.
+
+        Args:
+            src: Source sequence, shape ``[B, S_q, D]``.
+            cntx: Context sequence for cross attention, shape ``[B, S_k, D]``.
+                For self-attention this is ignored and ``src`` is used.
+            src_key_padding_mask: Boolean padding mask for the query, shape ``[B, S_q]``
+                (True = padded position).
+            context_key_padding_mask: Boolean padding mask for the key/context,
+                shape ``[B, S_k]`` (True = padded position).
+            max_seqlen_q / max_seqlen_k: maximum unpadded query/key sequence
+                lengths in the batch. Used to align ALiBi distances when
+                Q and K have different lengths.
+            cleanup: whether to free temporary tensors and call
+                ``torch.cuda.empty_cache()`` after the computation.
+
+        Returns:
+            Attention probabilities, shape ``[B, H, S_q, S_k]``. For self-attention
+            ``S_q == S_k``.
+        """
+        if self.cross_attn:
+            assert cntx is not None, "Context tensor must be provided for cross attention"
+        else:
+            cntx = src
+
+        delta = (
+            max_seqlen_k - max_seqlen_q
+            if max_seqlen_q is not None and max_seqlen_k is not None
+            else 0
+        )
+
+        if self.cross_attn:
+            Q = self.MHA.Wq(src)
+            KV = self.MHA.Wkv(cntx)
+            Q = rearrange(Q, "b s (h d) -> b s h d", d=self.MHA.head_dim)
+            KV = rearrange(
+                KV, "b s (two h d) -> two b s h d", two=2, d=self.MHA.head_dim
+            )
+            K, V = KV
+        else:
+            QKV = self.MHA.Wqkv(src)
+            QKV = rearrange(
+                QKV, "b s (three h d) -> three b s h d", three=3, d=self.MHA.head_dim
+            )
+            Q, K, V = QKV
+
+        B, S_q, H, D = Q.shape
+        S_k = K.shape[1]
+
+        Q = rearrange(Q, "b s h d -> (b h) s d")
+        K = rearrange(K, "b s h d -> (b h) s d")
+        V = rearrange(V, "b s h d -> (b h) s d")
+
+        softmax_scale = 1.0 / math.sqrt(D)
+        logits = torch.einsum("btd,bsd->bts", Q, K * softmax_scale)
+
+        if self.use_alibi:
+            alibi_slopes = (
+                get_alibi_slopes(H).to(src.device).repeat(B).to(src.dtype)
+            )
+            alibi_slopes = alibi_slopes.unsqueeze(1).unsqueeze(2)
+
+            q_idx = torch.arange(S_q, dtype=src.dtype, device=src.device).unsqueeze(1)
+            k_idx = torch.arange(S_k, dtype=src.dtype, device=src.device).unsqueeze(0)
+            distance = q_idx + delta - k_idx
+
+            bias = alibi_slopes * torch.abs(distance)
+            logits = logits - bias
+            del distance, bias, q_idx, k_idx, alibi_slopes
+
+        if self.cross_attn:
+            key_padding_mask = context_key_padding_mask
+        else:
+            key_padding_mask = src_key_padding_mask
+
+        if key_padding_mask is not None:
+            logits = rearrange(logits, "(b h) sq sk -> b h sq sk", b=B, h=H)
+            mask = key_padding_mask.unsqueeze(1).unsqueeze(2)  # (b, 1, 1, sk)
+            logits.masked_fill_(mask, float("-inf"))
+            logits = rearrange(logits, "b h sq sk -> (b h) sq sk")
+
+        if self.causal:
+            causal_mask = torch.triu(
+                torch.ones(S_q, S_k, dtype=logits.dtype, device=logits.device),
+                diagonal=1,
+            )
+            logits = logits.masked_fill(causal_mask.bool(), float("-inf"))
+            del causal_mask
+
+        attn = torch.softmax(logits, dim=-1)
+        attn = attn.nan_to_num(0)
+        attn = rearrange(attn, "(b h) sq sk -> b h sq sk", b=B, h=H, sq=S_q, sk=S_k)
+
+        if src_key_padding_mask is not None:
+            attn_mask = src_key_padding_mask.unsqueeze(1).unsqueeze(3)  # (B, 1, S_q, 1)
+            attn.masked_fill_(attn_mask, 0.0)
+
+        if cleanup:
+            del logits
+            del Q, K, V
+            if self.cross_attn:
+                del KV
+            else:
+                del QKV
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+        attn = attn.detach()
+        return attn
 
 
 class StartToken(nn.Module):
