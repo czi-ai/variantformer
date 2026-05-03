@@ -19,7 +19,7 @@ Typical usage with a one-off forward pass::
 
     from seq2gene.attn_log_callback import LogAttention
 
-    log_attn = LogAttention(layer_ids=[0, 4, 8], log_heatmaps=False)
+    log_attn = LogAttention(layer_ids=[0, 4, 8])
     with log_attn.record_attention(model, log_epigenetics=True, log_gene=True):
         _ = model(*inputs)
     # log_attn.attention_matrices is now a dict of
@@ -30,7 +30,6 @@ from __future__ import annotations
 
 import dataclasses
 from contextlib import contextmanager
-from datetime import datetime
 from typing import Iterable, Optional
 
 import lightning.pytorch as pl
@@ -38,7 +37,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import torch
 import torch.nn as nn
-from torch.utils.tensorboard import SummaryWriter
 
 from seq2gene.modules.layers import (
     ContextFlashAttentionEncoderLayer,
@@ -49,7 +47,7 @@ from seq2gene.modules.layers import (
 
 @dataclasses.dataclass
 class MatrixLogMetadata:
-    """Metadata used to label a captured attention matrix for plotting/logging."""
+    """Metadata used to label a captured attention matrix for plotting."""
 
     modulator_name: str  # one of "epigenetics_modulator" / "gene_modulator"
     mha_name: str  # human-readable mha name (e.g. "epigenetics_modulator_mixer_3")
@@ -131,20 +129,6 @@ def create_heatmap_from_matrix(
     return fig
 
 
-def write_figure_to_tensorboard(
-    fig: plt.Figure, writer: SummaryWriter, mlm: MatrixLogMetadata
-) -> None:
-    """Add a heatmap figure to a TensorBoard SummaryWriter."""
-    if fig is None:
-        raise ValueError("Figure is None, cannot write to TensorBoard.")
-    writer.add_figure(
-        f"attention/{mlm.modulator_name}/{mlm.mha_name}/attn_{mlm.aggregation_op}_{mlm.layer_id + 1}",
-        fig,
-        global_step=mlm.step_number,
-    )
-    plt.close(fig)
-
-
 _LAYER_TYPES = (
     ContextFlashAttentionEncoderLayer,
     FlashAttentionEncoderLayer,
@@ -163,24 +147,25 @@ class LogAttention(pl.Callback):
     2. **As a context manager** via :meth:`record_attention` for a single
        manual forward pass.
 
+    Captured matrices are accumulated on ``self.attention_matrices`` keyed by
+    ``f"{modulator_name}_{mha_name}_{layer_idx}"``. Use the
+    :func:`create_heatmap` / :func:`create_heatmap_from_matrix` helpers
+    (matplotlib + seaborn) if you want to render them, or plot them yourself.
+
     Args:
         freq_steps: capture every Nth predict batch (only relevant in
             callback mode).
         layer_ids: layer indices (within each modulator's ``ModuleList``) to
             capture. Indices outside the list are silently skipped.
-        log_heatmaps: if True, render and emit heatmaps to TensorBoard;
-            otherwise, accumulate raw matrices on ``self.attention_matrices``.
         keep_heads: if True, keep the per-head dimension when accumulating
             matrices (each entry has shape ``(H, Q, K)``); if False (default),
             average over heads (each entry has shape ``(Q, K)``).
-            TensorBoard heatmaps always use head-averaged matrices.
     """
 
     def __init__(
         self,
         freq_steps: int = 100,
         layer_ids: Optional[Iterable[int]] = None,
-        log_heatmaps: bool = False,
         keep_heads: bool = False,
     ):
         super().__init__()
@@ -188,13 +173,8 @@ class LogAttention(pl.Callback):
             layer_ids = [1, 4, 9, 13, 17, 23, 24]
         self.freq_steps = freq_steps
         self.layer_ids = list(layer_ids)
-        self.log_heatmaps = log_heatmaps
         self.keep_heads = keep_heads
         self.attention_matrices: dict[str, list[torch.Tensor]] = {}
-        self.writer: Optional[SummaryWriter] = None
-        if self.log_heatmaps:
-            timestamp = datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
-            self.writer = SummaryWriter(log_dir=f"runs/attention-log-{timestamp}")
 
     # ------------------------------------------------------------------ utils
     def _should_process_batch(self, batch_idx: int) -> bool:
@@ -248,59 +228,34 @@ class LogAttention(pl.Callback):
         layer: nn.Module,
         layer_idx: int,
         modulator_name: str,
-        log_heatmap: bool = False,
-    ) -> Optional[dict[str, list[torch.Tensor]]]:
-        """Pull captured matrices off a layer and either log or return them."""
+    ) -> dict[str, list[torch.Tensor]]:
+        """Pull captured matrices off a layer and return them keyed by mha name."""
         matrices: dict[str, list[torch.Tensor]] = {}
-        mhas: list[tuple[nn.Module, str, bool]] = []
+        mhas: list[tuple[nn.Module, str]] = []
 
         if isinstance(
             layer,
             (ContextFlashAttentionEncoderLayer, ContextFlashCrossAttentionEncoderLayer),
         ) and hasattr(layer, "crossMHA"):
-            mhas.append(
-                (layer.crossMHA, f"{modulator_name}_crossMHA_{layer_idx}", True)
-            )
+            mhas.append((layer.crossMHA, f"{modulator_name}_crossMHA_{layer_idx}"))
         if isinstance(
             layer, (ContextFlashAttentionEncoderLayer, FlashAttentionEncoderLayer)
         ) and hasattr(layer, "mixer"):
-            mhas.append((layer.mixer, f"{modulator_name}_mixer_{layer_idx}", False))
+            mhas.append((layer.mixer, f"{modulator_name}_mixer_{layer_idx}"))
 
-        for mha, mha_name, is_cross_attn in mhas:
+        for mha, mha_name in mhas:
             if not hasattr(mha, "attn_matrix") or mha.attn_matrix is None:
                 continue
-            # TensorBoard heatmaps need a 2D (Q, K) matrix, so always
-            # head-average there. For the in-memory accumulator we honor
-            # ``self.keep_heads`` and produce ``(H, Q, K)`` per batch entry
-            # when the user wants to inspect heads.
             processed_matrices = process_attention_matrix_all_batches(
                 mha.attn_matrix,
-                keep_heads=self.keep_heads and not log_heatmap,
+                keep_heads=self.keep_heads,
             )
             # Free GPU memory from the captured raw tensor immediately.
             mha.attn_matrix = None
-
-            if log_heatmap:
-                if processed_matrices is None:
-                    continue
-                for matrix_idx, processed_matrix in enumerate(processed_matrices):
-                    mlm = MatrixLogMetadata(
-                        modulator_name=modulator_name,
-                        mha_name=mha_name,
-                        layer_id=layer_idx,
-                        step_number=-1,
-                        cross_attn=is_cross_attn,
-                        batch_idx=matrix_idx,
-                    )
-                    fig = create_heatmap_from_matrix(mlm, processed_matrix)
-                    if fig and self.writer is not None:
-                        write_figure_to_tensorboard(fig, self.writer, mlm)
-            else:
+            if processed_matrices is not None:
                 matrices[mha_name] = processed_matrices
 
-        if not log_heatmap:
-            return matrices
-        return None
+        return matrices
 
     def _process_modulator(
         self,
@@ -316,9 +271,9 @@ class LogAttention(pl.Callback):
             self._set_log_flags(layer, set_flags)
             if not set_flags:  # teardown phase: now read & clear
                 matrices = self._process_attention_matrices(
-                    layer, layer_idx, modulator_name, log_heatmap=self.log_heatmaps
+                    layer, layer_idx, modulator_name
                 )
-                if not self.log_heatmaps and matrices:
+                if matrices:
                     self.attention_matrices.update(matrices)
 
     # ------------------------------------------------------------- public API
@@ -338,7 +293,7 @@ class LogAttention(pl.Callback):
 
         Example::
 
-            log_attn = LogAttention(layer_ids=[0, 4], log_heatmaps=False)
+            log_attn = LogAttention(layer_ids=[0, 4])
             with log_attn.record_attention(model):
                 _ = model(*inputs)
             log_attn.attention_matrices  # populated

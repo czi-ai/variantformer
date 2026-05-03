@@ -315,7 +315,7 @@ class TestRecordAttentionEndToEnd(unittest.TestCase):
             _ = self.model(cre, gene, cre_mask, gene_mask, precision=torch.float16)
 
     def test_record_attention_populates_dict(self):
-        log_attn = LogAttention(layer_ids=[0, 1], log_heatmaps=False)
+        log_attn = LogAttention(layer_ids=[0, 1])
         with log_attn.record_attention(self.model):
             self._forward()
 
@@ -347,7 +347,7 @@ class TestRecordAttentionEndToEnd(unittest.TestCase):
                 )
 
     def test_record_attention_skips_layers_outside_layer_ids(self):
-        log_attn = LogAttention(layer_ids=[0], log_heatmaps=False)
+        log_attn = LogAttention(layer_ids=[0])
         with log_attn.record_attention(self.model):
             self._forward()
         keys = list(log_attn.attention_matrices.keys())
@@ -355,7 +355,7 @@ class TestRecordAttentionEndToEnd(unittest.TestCase):
             self.assertTrue(k.endswith("_0"), f"unexpected key {k}")
 
     def test_log_flags_are_reset_after_context_exit(self):
-        log_attn = LogAttention(layer_ids=[0, 1], log_heatmaps=False)
+        log_attn = LogAttention(layer_ids=[0, 1])
         with log_attn.record_attention(self.model):
             self._forward()
         # After exit, no FlashAttLayer should still have log_attn_matrix=True
@@ -365,7 +365,7 @@ class TestRecordAttentionEndToEnd(unittest.TestCase):
             self.assertFalse(layer.crossMHA.log_attn_matrix)
 
     def test_recorded_matrices_are_on_cpu(self):
-        log_attn = LogAttention(layer_ids=[0], log_heatmaps=False)
+        log_attn = LogAttention(layer_ids=[0])
         with log_attn.record_attention(self.model):
             self._forward()
         for mats in log_attn.attention_matrices.values():
@@ -375,7 +375,7 @@ class TestRecordAttentionEndToEnd(unittest.TestCase):
     def test_record_attention_keep_heads_preserves_head_dimension(self):
         """``keep_heads=True`` must keep ``(H, Q, K)`` per-batch entries."""
         log_attn = LogAttention(
-            layer_ids=[0], log_heatmaps=False, keep_heads=True
+            layer_ids=[0], keep_heads=True
         )
         with log_attn.record_attention(self.model):
             self._forward()
@@ -389,7 +389,7 @@ class TestRecordAttentionEndToEnd(unittest.TestCase):
 
     def test_record_attention_default_averages_heads(self):
         """Default behaviour (``keep_heads=False``) must collapse heads."""
-        log_attn = LogAttention(layer_ids=[0], log_heatmaps=False)
+        log_attn = LogAttention(layer_ids=[0])
         with log_attn.record_attention(self.model):
             self._forward()
         for mats in log_attn.attention_matrices.values():
@@ -397,7 +397,7 @@ class TestRecordAttentionEndToEnd(unittest.TestCase):
                 self.assertEqual(m.dim(), 2)  # (Q, K), heads averaged out
 
     def test_record_attention_with_only_epigenetics(self):
-        log_attn = LogAttention(layer_ids=[0], log_heatmaps=False)
+        log_attn = LogAttention(layer_ids=[0])
         with log_attn.record_attention(self.model, log_epigenetics=True, log_gene=False):
             self._forward()
         for k in log_attn.attention_matrices:
@@ -412,7 +412,7 @@ class TestRecordAttentionEndToEnd(unittest.TestCase):
         with torch.no_grad():
             out_no_log = self.model(cre, gene, cre_mask, gene_mask, precision=torch.float16)
 
-            log_attn = LogAttention(layer_ids=[0, 1], log_heatmaps=False)
+            log_attn = LogAttention(layer_ids=[0, 1])
             with log_attn.record_attention(self.model):
                 out_with_log = self.model(
                     cre, gene, cre_mask, gene_mask, precision=torch.float16
