@@ -259,7 +259,7 @@ class VCFProcessor:
         return model, checkpoint_path, trainer
 
     def predict(self, model, checkpoint_path, trainer, dataloader, vcf_dataset):
-        predictions = trainer.predict(model, dataloader, ckpt_path=checkpoint_path)
+        predictions = trainer.predict(model, dataloader, ckpt_path=None)
         query_df = vcf_dataset.query_df
         output_df = self.format_output(query_df, predictions)
         return output_df

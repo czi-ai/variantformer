@@ -1,8 +1,4 @@
-import os
 import subprocess
-from multiprocessing import Pool
-import multiprocessing as mp
-from concurrent.futures import ProcessPoolExecutor
 import pandas as pd
 
 
@@ -101,7 +97,7 @@ class ExtractSeqFromBed:
         return mutated_seq, mutations
 
     def process_region(self, args):
-        """Process a single region."""
+        """Process a single region (used as fallback)."""
         region, vcf_file, reference_fasta, variant_type = args
         mutated_seq, mutations = self.apply_bcftools_consensus(
             region, vcf_file, reference_fasta, variant_type=variant_type
@@ -117,248 +113,134 @@ class ExtractSeqFromBed:
             return D, mutations
         return None, None
 
-    def _is_nested_parallel_context(self):
-        """Check if we're already in a parallel execution context."""
-        import threading
-        import os
-
-        # Check for PyTorch DataLoader worker context
-        try:
-            import torch.utils.data
-
-            worker_info = torch.utils.data.get_worker_info()
-            if worker_info is not None:
-                return True
-        except ImportError:
-            pass
-
-        # Check various other indicators of parallel execution
-        indicators = [
-            # Check if we're in a joblib worker process
-            os.environ.get("JOBLIB_WORKER_ID") is not None,
-            # Check PyTorch environment variables
-            os.environ.get("PYTORCH_WORKER_ID") is not None,
-            # Check if thread name suggests we're in a worker
-            "worker" in threading.current_thread().name.lower(),
-            # Check if process name suggests we're in a worker
-            "worker" in mp.current_process().name.lower(),
-            # Check for multiprocessing Pool worker naming convention
-            "Pool" in mp.current_process().name,
-            # Check for DataLoader worker naming patterns
-            "DataLoader" in mp.current_process().name,
-        ]
-
-        return any(indicators)
-
-    def _try_joblib_parallel(self, args_list, max_workers):
-        """Try joblib.Parallel for multiprocessing."""
-        from joblib import Parallel, delayed
-
-        # Always try multiprocessing first - let other methods handle nested context detection
-        return Parallel(n_jobs=max_workers, backend="multiprocessing")(
-            delayed(self.process_region)(arg) for arg in args_list
-        )
-
-    def _try_joblib_loky(self, args_list, max_workers):
-        """Try joblib.Parallel with loky backend (good for nested contexts)."""
-        from joblib import Parallel, delayed
-
-        return Parallel(n_jobs=max_workers, backend="loky")(
-            delayed(self.process_region)(arg) for arg in args_list
-        )
-
-    def _try_safe_nested_spawn(self, args_list, max_workers):
-        """Try a smaller spawn pool specifically for nested contexts."""
-        # Use even fewer workers for safer nested processing
-        safe_workers = min(max_workers, 2)
-        ctx = mp.get_context("spawn")
-        with ctx.Pool(processes=safe_workers) as pool:
-            return pool.map(self.process_region, args_list)
-
-    def _try_joblib_threading(self, args_list, max_workers):
-        """Try joblib.Parallel with threading backend specifically."""
-        from joblib import Parallel, delayed
-
-        return Parallel(n_jobs=max_workers, backend="threading")(
-            delayed(self.process_region)(arg) for arg in args_list
-        )
-
-    def _try_optimized_io_threading(self, args_list, max_workers):
-        """Optimized threading specifically for I/O-bound bcftools operations."""
-        from concurrent.futures import ThreadPoolExecutor
-
-        # Use higher thread count for I/O-bound operations
-        io_workers = min(max_workers * 2, len(args_list), 16)
-
-        with ThreadPoolExecutor(
-            max_workers=io_workers, thread_name_prefix="BCFTools"
-        ) as executor:
-            return list(executor.map(self.process_region, args_list))
-
-    def _try_process_pool_executor(self, args_list, max_workers):
-        """Try concurrent.futures.ProcessPoolExecutor."""
-        with ProcessPoolExecutor(max_workers=max_workers) as executor:
-            return list(executor.map(self.process_region, args_list))
-
-    def _try_spawn_pool(self, args_list, max_workers):
-        """Try multiprocessing Pool with spawn context."""
-        ctx = mp.get_context("spawn")
-        with ctx.Pool(processes=max_workers) as pool:
-            return pool.map(self.process_region, args_list)
-
-    def _try_forkserver_pool(self, args_list, max_workers):
-        """Try multiprocessing Pool with forkserver context."""
-        ctx = mp.get_context("forkserver")
-        with ctx.Pool(processes=max_workers) as pool:
-            return pool.map(self.process_region, args_list)
-
-    def _try_thread_pool_executor(self, args_list, max_workers):
-        """Try concurrent.futures.ThreadPoolExecutor."""
-        from concurrent.futures import ThreadPoolExecutor
-
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            return list(executor.map(self.process_region, args_list))
-
-    def _try_async_thread_pool(self, args_list, max_workers):
-        """Try async threading approach for better I/O concurrency."""
-        import concurrent.futures
-        import asyncio
-
-        async def run_async():
-            loop = asyncio.get_event_loop()
-            with concurrent.futures.ThreadPoolExecutor(
-                max_workers=max_workers
-            ) as executor:
-                tasks = [
-                    loop.run_in_executor(executor, self.process_region, arg)
-                    for arg in args_list
-                ]
-                return await asyncio.gather(*tasks)
-
-        # Run in new event loop to avoid conflicts
-        try:
-            return asyncio.run(run_async())
-        except RuntimeError:
-            # If there's already an event loop, run in thread
-            import threading
-
-            result = []
-            exception = []
-
-            def run_in_thread():
-                try:
-                    result.append(asyncio.run(run_async()))
-                except Exception as e:
-                    exception.append(e)
-
-            thread = threading.Thread(target=run_in_thread)
-            thread.start()
-            thread.join()
-
-            if exception:
-                raise exception[0]
-            return result[0]
-
-    def _try_global_spawn_pool(self, args_list, max_workers):
-        """Try setting global start method to spawn and using regular Pool."""
-        original_start_method = mp.get_start_method()
-        try:
-            mp.set_start_method("spawn", force=True)
-            with Pool(processes=max_workers) as pool:
-                return pool.map(self.process_region, args_list)
-        finally:
-            # Restore original start method
-            try:
-                mp.set_start_method(original_start_method, force=True)
-            except:
-                pass  # Ignore errors when restoring
-
     def _serial_processing(self, args_list):
-        """Fallback to serial processing."""
+        """Fallback (serially processes regions with own bcftools call)."""
         results = []
         for arg in args_list:
             result = self.process_region(arg)
             results.append(result)
         return results
+    
+    def _region_to_str(self, region):
+        """Builds 1-based samtools region string for a given CRE region."""
+        chrom = region.chrom
+        start = max(0, int(region.start) - self.neighbour_hood)
+        end = int(region.end) + self.neighbour_hood
+        return f"{chrom}:{start + 1}-{end}"
+    
+    @staticmethod
+    def _bcftools_consensus_args(vcf_file, variant_type):
+        if variant_type == "SNP":
+            exclude = 'ALT~"<.*>" || TYPE!="snp"'
+        else:
+            exclude = 'ALT~"<.*>"'
+        return ["bcftools", "consensus", "-H", "I", "-e", exclude, vcf_file]
+    
+    @staticmethod
+    def _parse_multifasta(text: str):
+        """Parse multi-record FASTA text into ordered list of sequences."""
+        sequences = []
+        current = None
+        for line in text.splitlines():
+            if line.startswith(">"):
+                if current is not None:
+                    sequences.append("".join(current))
+                current = []
+            elif current is not None:
+                current.append(line.strip())
+        if current is not None:
+            sequences.append("".join(current))
+        return sequences
+    
+    def _extract_sequences_batched(self, region_strs, vcf_file, variant_type):
+        """Extract sequences for multiple regions with a single subprocess pipeline.
+
+        Executes single `samtools faidx` command with multiple regions, optionally piped
+        through `bcftools consensus` for variant consensus calling.
+        More efficient than processing regions individually!
+        """
+        cmd_ref = ["samtools", "faidx", self.ref_fasta, *region_strs]
+
+        if not vcf_file:
+            result = subprocess.run(cmd_ref, capture_output=True, text=True)
+            if result.returncode != 0:
+                print(f"\nError running batched samtools faidx: {result.stderr}")
+                return None
+            sequences = self._parse_multifasta(result.stdout)
+        else:
+            samtools_process = subprocess.Popen(
+                cmd_ref, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            )
+            result = subprocess.run(
+                self._bcftools_consensus_args(vcf_file, variant_type),
+                stdin=samtools_process.stdout,
+                capture_output=True,
+                text=True,
+            )
+            samtools_process.stdout.close()
+            samtools_process.stderr.read()
+            samtools_process.stderr.close()
+            samtools_process.wait()
+
+            if result.returncode != 0:
+                print(f"\nError running batched bcftools consensus: {result.stderr}")
+                return None
+            sequences = self._parse_multifasta(result.stdout)
+
+        if len(sequences) != len(region_strs):
+            print(
+                "Batched consensus returned "
+                f"{len(sequences)} records for {len(region_strs)} regions; "
+                "falling back to per-region extraction."
+            )
+            return None
+        return sequences
 
     def process_subject(
         self, vcf_file: str, bed_regions: pd.DataFrame, variant_type: str = None
     ):
-        """Process each subject's VCF file and apply mutations to the reference sequence."""
-        ncpus = os.cpu_count()
-        args_list = [
-            (region, vcf_file, self.ref_fasta, variant_type)
-            for _, region in bed_regions.iterrows()
-        ]
+        """Apply variants to all of a gene's CRE windows in one subprocess call.
 
-        # Check if we're in a DataLoader worker context
-        is_nested = self._is_nested_parallel_context()
+        Runs a single `samtools faidx | bcftools consensus` over every CRE region
+        rather than spawning a nested pool of one subprocess pair per region. The
+        per-record output is identical to calling `bcftools consensus` on each
+        region individually.
+        """
+        regions = [region for _, region in bed_regions.iterrows()]
+        region_strs = [self._region_to_str(region) for region in regions]
 
-        if is_nested:
-            # Adjust worker count for nested context to avoid resource conflicts
-            try:
-                import torch.utils.data
+        sequences = None
+        if region_strs:
+            sequences = self._extract_sequences_batched(
+                region_strs, vcf_file, variant_type
+            )
 
-                worker_info = torch.utils.data.get_worker_info()
-                if worker_info is not None:
-                    # Calculate workers per DataLoader worker
-                    dataloader_workers = worker_info.num_workers
-                    max_workers = max(
-                        1, min(ncpus // dataloader_workers, len(bed_regions), 8)
-                    )
-                else:
-                    max_workers = max(1, min(ncpus // 4, len(bed_regions), 4))
-            except ImportError:
-                max_workers = max(1, min(ncpus // 4, len(bed_regions), 4))
-
-            # For nested context, prioritize threading approaches (processes won't work in daemon context)
-            approaches = [
-                ("Optimized I/O Threading", self._try_optimized_io_threading),
-                ("ThreadPoolExecutor", self._try_thread_pool_executor),
-                ("async thread pool", self._try_async_thread_pool),
-                ("joblib.Threading", self._try_joblib_threading),
-                # These will fail but kept as fallbacks with minimal logging
-                ("joblib.loky", self._try_joblib_loky),
-            ]
-        else:
-            # Normal context - use more workers
-            max_workers = min(ncpus // 3 + 1, len(bed_regions))
-            print(f"Normal context: using {max_workers} workers")
-
-            approaches = [
-                ("joblib.Parallel", self._try_joblib_parallel),
-                ("ProcessPoolExecutor", self._try_process_pool_executor),
-                ("spawn Pool", self._try_spawn_pool),
-                ("global spawn Pool", self._try_global_spawn_pool),
-                ("forkserver Pool", self._try_forkserver_pool),
-                ("ThreadPoolExecutor", self._try_thread_pool_executor),
-            ]
-
-        results = None
-        for name, method in approaches:
-            try:
-                results = method(args_list, max_workers)
-                break
-            except Exception as e:
-                # Suppress expected errors in nested contexts
-                if is_nested and (
-                    "daemonic processes" in str(e) or "multiprocessing" in str(e)
-                ):
-                    continue  # Expected failure, no logging
-                else:
-                    print(f"{name} failed: {e}")
-                continue
-
-        # If all methods failed, fall back to serial processing
-        if results is None:
-            print(f"All methods failed, processing {len(bed_regions)} regions serially")
-            results = self._serial_processing(args_list)
         D = []
-        for result in results:
-            if result[0]:
-                D.append(result[0])
+        if sequences is not None:
+            for region, mutated_seq in zip(regions, sequences):
+                if not mutated_seq:
+                    continue
+                D.append(
+                    {
+                        "chrom": region.chrom,
+                        "start_cre": max(0, region.start - self.neighbour_hood),
+                        "end_cre": region.end + self.neighbour_hood,
+                        "sequence": mutated_seq,
+                        "cCRE": region.cCRE,
+                    }
+                )
+        else:
+            # fall back to serial per-region calls
+            args_list = [
+                (region, vcf_file, self.ref_fasta, variant_type)
+                for region in regions
+            ]
+            for result, _ in self._serial_processing(args_list):
+                if result:
+                    D.append(result)
+
         df = pd.DataFrame(D)
-        if not df["start_cre"].is_monotonic_increasing:
+        if not df.empty and not df["start_cre"].is_monotonic_increasing:
             df = df.sort_values(by=["chrom", "start_cre"], ascending=True).reset_index(
                 drop=True
             )
